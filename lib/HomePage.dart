@@ -15,15 +15,139 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Completer<GoogleMapController> _controller = Completer();
+//  Completer<GoogleMapController> _controller = Completer();
 
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(24.967379, 121.2617269),
     zoom: 14.4746,
   );
 
-  int _selectedIndex = 0;
-  List<Widget> list = [];
+  int _selectedIndex = 1;
+
+  List<Widget> list(BuildContext context) => <Widget>[
+        Container(
+          color: Colors.brown,
+        ),
+        Container(
+            child: Stack(children: [
+          GoogleMap(
+            mapType: MapType.normal,
+            compassEnabled: false,
+            zoomControlsEnabled: false,
+            myLocationEnabled: true,
+            myLocationButtonEnabled: false,
+            initialCameraPosition: _kGooglePlex,
+            onMapCreated: _onMapCreated,
+          ),
+          SafeArea(
+              child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Flexible(
+                    flex: 2,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: Colors.lightGreen,
+                            width: 4,
+                          ),
+                        ),
+                        prefixIcon: Icon(Icons.search),
+                        contentPadding: EdgeInsets.all(16.0),
+                        border: OutlineInputBorder(),
+                        hintText: '搜尋想看的植物',
+                      ),
+                      controller: _chatController,
+                      onSubmitted: _submitText, // 綁定事件給_submitText這個Function
+                    )),
+                Container(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+                    child: CircleAvatar(
+                        backgroundColor: Colors.lightGreen,
+                        child: IconButton(
+                            icon: Icon(
+                              Icons.send,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              print("沒作用");
+                            }))),
+                CircleAvatar(
+                    backgroundColor: Colors.lightGreen,
+                    child: IconButton(
+                        icon: Icon(Icons.send, color: Colors.white),
+                        onPressed: () {
+                          print("沒作用");
+                        })),
+              ],
+            ),
+          )),
+          Align(
+              //TODO 弄成想要的形狀
+              alignment: FractionalOffset.bottomCenter,
+              child: Container(
+                  height: 125,
+                  width: MediaQuery.of(context).size.width / 2,
+//                  color: Colors.red,
+                  child: Stack(
+                    children: [
+                      Container(
+                          alignment: Alignment.bottomCenter,
+                          child: Stack(children: [
+                            Container(
+//                                color: Colors.black,
+                                alignment: Alignment.bottomCenter,
+                                child: CustomPaint(
+                                  size: Size(100, 100),
+                                  painter: MyPainter(),
+                                )),
+                            Container(
+//                              color: Colors.yellow,
+                                alignment: Alignment.bottomCenter,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.wb_sunny_outlined, size: 35,color: Colors.white,),
+                                    Container(
+                                      width: 10,
+                                      height: 75,
+                                    ),
+                                    Text(
+                                      "900°C",
+                                      style: TextStyle(fontSize: 30,color: Colors.white),
+                                    ),
+                                  ],
+                                ))
+                          ])),
+                      Align(
+                          alignment: Alignment.topCenter,
+                          child: Container(
+                            width: 100,
+                            height: 40,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: Colors.lightGreen,
+                                border: Border.all(color: Colors.white)),
+                            child: Text(
+                              "中壢區",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 24),
+                              textAlign: TextAlign.center,
+                            ),
+                          )),
+                    ],
+                  )))
+        ])),
+        Container(
+          color: Colors.brown,
+        ),
+      ];
 
   final TextEditingController _chatController = TextEditingController();
 
@@ -34,85 +158,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    list = [
-      Container(
-        color: Colors.brown,
-      ),
-      Container(
-          child: Stack(children: [
-        GoogleMap(
-          mapType: MapType.normal,
-          compassEnabled: false,
-          zoomControlsEnabled: false,
-          myLocationEnabled: true,
-          myLocationButtonEnabled: false,
-          initialCameraPosition: _kGooglePlex,
-          onMapCreated: _onMapCreated,
-        ),
-        SafeArea(
-            child: Container(
-          padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Flexible(
-                  flex: 2,
-                  child: TextField(
-                    decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: Colors.lightGreen,
-                          width: 4,
-                        ),
-                      ),
-                      prefixIcon: Icon(Icons.search),
-                      contentPadding: EdgeInsets.all(16.0),
-                      border: OutlineInputBorder(),
-                      hintText: '搜尋想看的植物',
-                    ),
-                    controller: _chatController,
-                    onSubmitted: _submitText, // 綁定事件給_submitText這個Function
-                  )),
-              Container(
-                  padding:
-                      EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
-                  child: CircleAvatar(
-                      backgroundColor: Colors.lightGreen,
-                      child: IconButton(
-                          icon: Icon(
-                            Icons.send,
-                            color: Colors.white,
-                          ),
-                          onPressed: () {
-                            print("沒作用");
-                          }))),
-              CircleAvatar(
-                  backgroundColor: Colors.lightGreen,
-                  child: IconButton(
-                      icon: Icon(Icons.send, color: Colors.white),
-                      onPressed: () {
-                        print("沒作用");
-                      })),
-            ],
-          ),
-        )),
-        Align( //TODO 弄成想要的形狀
-          alignment: FractionalOffset.bottomCenter,
-          child: CustomPaint(
-            size: Size(200,100),
-            painter: MyPainter(),
-          )
-        )
-      ])),
-      Container(
-        color: Colors.brown,
-      ),
-    ];
   }
-// 沒事
-  int _counter = 0;
+
   final Map<String, Marker> _markers = {};
 
   Future<void> _onMapCreated(GoogleMapController controller) async {
@@ -145,7 +192,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-      body: list.elementAt(_selectedIndex),
+      body: list(context).elementAt(_selectedIndex),
 //      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
 //      floatingActionButton: Stack(
 //        children: <Widget>[
@@ -227,17 +274,5 @@ class _HomePageState extends State<HomePage> {
         onTap: _onItemTapped,
       ),
     );
-  }
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  void _decremenrCounter() {
-    setState(() {
-      _counter--;
-    });
   }
 }
