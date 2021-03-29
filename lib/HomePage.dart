@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'src/locations.dart' as locations;
+import 'package:kumi_popup_window/kumi_popup_window.dart';
 import 'myPainter.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,15 +23,19 @@ class _HomePageState extends State<HomePage> {
     zoom: 14.4746,
   );
 
+  List<bool> selectBool = [false, false, false];
   int _selectedIndex = 1;
 
   List<Widget> list(BuildContext context) => <Widget>[
         Container(
           color: Colors.brown,
         ),
-        Container(
-            child: Stack(children: [
+        InkWell(
+          onTap:()=> FocusScope.of(context).unfocus(),
+            child: Container(
+                child: Stack(children: [
           GoogleMap(
+          //  onTap: (){ FocusScope.of(context).unfocus();},
             mapType: MapType.normal,
             compassEnabled: false,
             zoomControlsEnabled: false,
@@ -72,11 +77,116 @@ class _HomePageState extends State<HomePage> {
                         backgroundColor: Colors.lightGreen,
                         child: IconButton(
                             icon: Icon(
-                              Icons.send,
+                              Icons.list,
                               color: Colors.white,
                             ),
                             onPressed: () {
-                              print("沒作用");
+                              showPopupWindow(
+                                context,
+                                offsetX: 80,
+                                offsetY: 75,
+                                //childSize:Size(240, 800),
+                                gravity: KumiPopupGravity.rightTop,
+                                //curve: Curves.elasticOut,
+                                duration: Duration(milliseconds: 300),
+                                bgColor: Colors.black.withOpacity(0),
+                                onShowStart: (pop) {
+                                  print("showStart");
+                                },
+                                onShowFinish: (pop) {
+                                  print("showFinish");
+                                },
+                                onDismissStart: (pop) {
+                                  print("dismissStart");
+                                },
+                                onDismissFinish: (pop) {
+                                  print("dismissFinish");
+                                },
+                                onClickOut: (pop) {
+                                  print("onClickOut");
+                                },
+                                onClickBack: (pop) {
+                                  print("onClickBack");
+                                },
+                                childFun: (pop) {
+                                  return StatefulBuilder(
+                                      key: GlobalKey(),
+                                      builder: (popContext, popState) {
+                                        return Container(
+                                            padding: EdgeInsets.all(10),
+                                            height: (selectBool.length) *
+                                                65.toDouble(),
+                                            width: 200,
+//                                            color: Colors.black54,
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                border: Border.all(
+                                                    color: Colors.black)),
+                                            child: Column(
+                                              children: [
+                                                CheckboxListTile(
+                                                  checkColor: Colors.black,
+//                                                  activeColor: Colors.green,
+                                                  title: Text(
+                                                    "flower",
+                                                    style: TextStyle(
+                                                        color: Colors.black),
+                                                  ),
+//                                                  secondary: Icon(Icons.add),
+                                                  controlAffinity:
+                                                      ListTileControlAffinity
+                                                          .leading,
+                                                  value: selectBool[0],
+                                                  onChanged: (bool value) {
+                                                    popState(() {
+                                                      selectBool[0] = value;
+                                                    });
+                                                  },
+                                                ),
+                                                CheckboxListTile(
+                                                  checkColor: Colors.black,
+//                                                  activeColor: Colors.green,
+                                                  title: Text(
+                                                    "bird",
+                                                    style: TextStyle(
+                                                        color: Colors.black),
+                                                  ),
+                                                  controlAffinity:
+                                                      ListTileControlAffinity
+                                                          .leading,
+//                                                  secondary: Icon(Icons.add),
+                                                  value: selectBool[1],
+                                                  onChanged: (bool value) {
+                                                    popState(() {
+                                                      selectBool[1] = value;
+                                                    });
+                                                  },
+                                                ),
+                                                CheckboxListTile(
+                                                  checkColor: Colors.black,
+//                                                  activeColor: Colors.green,
+                                                  title: Text(
+                                                    "tree",
+                                                    style: TextStyle(
+                                                        color: Colors.black),
+                                                  ),
+                                                  controlAffinity:
+                                                      ListTileControlAffinity
+                                                          .leading,
+//                                                  secondary: Icon(Icons.add),
+                                                  value: selectBool[2],
+                                                  onChanged: (bool value) {
+                                                    popState(() {
+                                                      selectBool[2] = value;
+                                                    });
+                                                  },
+                                                ),
+                                              ],
+                                            ));
+                                      });
+                                },
+                              );
                             }))),
                 CircleAvatar(
                     backgroundColor: Colors.lightGreen,
@@ -113,14 +223,19 @@ class _HomePageState extends State<HomePage> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.wb_sunny_outlined, size: 35,color: Colors.white,),
+                                    Icon(
+                                      Icons.wb_sunny_outlined,
+                                      size: 35,
+                                      color: Colors.white,
+                                    ),
                                     Container(
                                       width: 10,
                                       height: 75,
                                     ),
                                     Text(
                                       "900°C",
-                                      style: TextStyle(fontSize: 30,color: Colors.white),
+                                      style: TextStyle(
+                                          fontSize: 30, color: Colors.white),
                                     ),
                                   ],
                                 ))
@@ -143,7 +258,7 @@ class _HomePageState extends State<HomePage> {
                           )),
                     ],
                   )))
-        ])),
+        ]))),
         Container(
           color: Colors.brown,
         ),
