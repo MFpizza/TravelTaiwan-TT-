@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'src/locations.dart' as locations;
 import 'package:kumi_popup_window/kumi_popup_window.dart';
-import 'myPainter.dart';
 
 //TODO 搜尋葉面 tag葉面 搜尋清單layout 地圖中間顯示地區
+//冠宇超屌
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
@@ -21,12 +21,12 @@ class _HomePageState extends State<HomePage> {
 //  Completer<GoogleMapController> _controller = Completer();
 
   static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(24.967379, 121.2617269),
+    target: LatLng(25.033398077340603, 121.56489870934207),
     zoom: 14.4746,
   );
 
   List<bool> selectBool = [false, false, false];
-  int _selectedIndex = 2;
+  int _selectedIndex = 1;
 
   List<Widget> list(BuildContext context) => <Widget>[
         // Home page
@@ -219,11 +219,12 @@ class _HomePageState extends State<HomePage> {
             //  onTap: (){ FocusScope.of(context).unfocus();},
             mapType: MapType.normal,
             compassEnabled: false,
-            zoomControlsEnabled: false,
-            myLocationEnabled: true,
-            myLocationButtonEnabled: false,
+            zoomControlsEnabled: true,
+            myLocationEnabled: false,
+            myLocationButtonEnabled: true,
             initialCameraPosition: _kGooglePlex,
             onMapCreated: _onMapCreated,
+            markers: _markers.values.toSet(),
           ),
           SafeArea(
               child: Container(
@@ -369,76 +370,16 @@ class _HomePageState extends State<HomePage> {
                                 },
                               );
                             }))),
-                CircleAvatar(
-                    backgroundColor: Colors.lightGreen,
-                    child: IconButton(
-                        icon: Icon(Icons.send, color: Colors.white),
-                        onPressed: () {
-                          print("沒作用");
-                        })),
+//                CircleAvatar(
+//                    backgroundColor: Colors.lightGreen,
+//                    child: IconButton(
+//                        icon: Icon(Icons.send, color: Colors.white),
+//                        onPressed: () {
+//                          print("沒作用");
+//                        })),
               ],
             ),
           )),
-          Align(
-              //TODO 弄成想要的形狀
-              alignment: FractionalOffset.bottomCenter,
-              child: Container(
-                  height: 125,
-                  width: MediaQuery.of(context).size.width / 2,
-//                  color: Colors.red,
-                  child: Stack(
-                    children: [
-                      Container(
-                          alignment: Alignment.bottomCenter,
-                          child: Stack(children: [
-                            Container(
-//                                color: Colors.black,
-                                alignment: Alignment.bottomCenter,
-                                child: CustomPaint(
-                                  size: Size(100, 100),
-                                  painter: MyPainter(),
-                                )),
-                            Container(
-//                              color: Colors.yellow,
-                                alignment: Alignment.bottomCenter,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.wb_sunny_outlined,
-                                      size: 35,
-                                      color: Colors.white,
-                                    ),
-                                    Container(
-                                      width: 10,
-                                      height: 75,
-                                    ),
-                                    Text(
-                                      "900°C",
-                                      style: TextStyle(
-                                          fontSize: 30, color: Colors.white),
-                                    ),
-                                  ],
-                                ))
-                          ])),
-                      Align(
-                          alignment: Alignment.topCenter,
-                          child: Container(
-                            width: 100,
-                            height: 40,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                                color: Colors.lightGreen,
-                                border: Border.all(color: Colors.white)),
-                            child: Text(
-                              "中壢區",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 24),
-                              textAlign: TextAlign.center,
-                            ),
-                          )),
-                    ],
-                  )))
         ])),
 
         // Member page
@@ -627,11 +568,13 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _onMapCreated(GoogleMapController controller) async {
     final googleOffices = await locations.getGoogleOffices();
+//    print(googleOffices);
     final icona = await BitmapDescriptor.fromAssetImage(
         ImageConfiguration(size: Size(1, 1)), 'assets/a.png');
     setState(() {
       _markers.clear();
       for (final office in googleOffices.offices) {
+//        print(office.name);
         final marker = Marker(
           markerId: MarkerId(office.name),
           position: LatLng(office.lat, office.lng),
@@ -640,6 +583,115 @@ class _HomePageState extends State<HomePage> {
             snippet: office.address,
           ),
           icon: icona,
+          onTap: () {
+            showPopupWindow(
+              context,
+//            offsetX: MediaQuery.of(context).size.width,
+              offsetY: 60,
+//              childSize: Size(300, 900),
+              gravity: KumiPopupGravity.centerBottom,
+              //curve: Curves.elasticOut,
+              duration: Duration(milliseconds: 300),
+              bgColor: Colors.black.withOpacity(0),
+              onShowStart: (pop) {
+                print("showStart");
+              },
+              onShowFinish: (pop) {
+                print("showFinish");
+              },
+              onDismissStart: (pop) {
+                print("dismissStart");
+              },
+              onDismissFinish: (pop) {
+                print("dismissFinish");
+              },
+              onClickOut: (pop) {
+                print("onClickOut");
+              },
+              onClickBack: (pop) {
+                print("onClickBack");
+              },
+              childFun: (pop) {
+                return StatefulBuilder(
+                    key: GlobalKey(),
+                    builder: (popContext, popState) {
+                      return Container(
+                          padding: EdgeInsets.all(10),
+                          height: MediaQuery.of(context).size.height/4,
+//                        width: 200,
+//                                            color: Colors.black54,
+                          alignment: Alignment.center,
+                          decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.elliptical(50, 50)),
+                              border: Border.all(color: Colors.black)),
+                          child: Column(
+                            children: [
+                              Container(
+                                height: 15,
+                              ),
+                              Container(
+                                  alignment: Alignment.bottomCenter,
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10.0, vertical: 10.0),
+//                                width: 300,
+//                                height: 100,
+//                                color:Colors.blue,
+                                  child: Flexible(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                            width: 130,
+                                            height: 130,
+                                            decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                    image: AssetImage(
+                                                        "assets/a.png"),
+                                                    fit: BoxFit.cover))),
+                                        Container(width: 10,),
+                                        Container(
+                                            width: 200,
+                                            height: 120,
+//                                            color: Colors.yellow,
+                                            child: Column(
+//                                              mainAxisAlignment: MainAxisAlignment.center,
+//                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "櫻花",
+                                                  style:
+                                                      TextStyle(fontSize: 30),
+                                                ),
+                                                Text(
+                                                  "addresssssssssssssssss",
+                                                  style:
+                                                      TextStyle(fontSize: 15),
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    Container(width: 20,),
+                                                    Icon(Icons.clear),
+                                                    Container(width: 70,),
+                                                    ElevatedButton(
+                                                        onPressed: () =>
+                                                            print("button"),
+                                                        child: Text("前往"))
+                                                  ],
+                                                )
+                                              ],
+                                            )),
+                                      ],
+                                    ),
+                                  )),
+                            ],
+                          ));
+                    });
+              },
+            );
+          },
         );
         _markers[office.name] = marker;
       }
@@ -656,63 +708,6 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return new Scaffold(
       body: list(context).elementAt(_selectedIndex),
-//      floatingActionButtonLocation: FloatingActionButtonLocation.startTop,
-//      floatingActionButton: Stack(
-//        children: <Widget>[
-//          Row(
-//            crossAxisAlignment: CrossAxisAlignment.end,
-//            children: <Widget>[
-//              Container(
-//                width: 40,
-//                height: 40,
-//                child: FloatingActionButton(
-//                  onPressed: _incrementCounter,
-//                  tooltip: 'Increment', //點住會出現訊息
-//                  child: Icon(Icons.menu),
-//                ),
-//              ),
-//              Container(
-//                width: 10,
-//                height: 10,
-//              ), // a space
-//              Container(
-//                width: 40,
-//                height: 40,
-//                child: FloatingActionButton(
-//                  onPressed: _decremenrCounter,
-//                  backgroundColor: Colors.red,
-//                  tooltip: 'Increment',
-//                  child: Icon(Icons.remove),
-//                ),
-//              ),
-//              Container(width: 180, height: 60),
-//              Container(
-//                width: 40,
-//                height: 40,
-//                child: FloatingActionButton(
-//                  onPressed: _incrementCounter,
-//                  tooltip: 'Increment',
-//                  child: Icon(Icons.menu),
-//                ),
-//              ),
-//              Container(
-//                width: 10,
-//                height: 10,
-//              ), // a space
-//              Container(
-//                width: 40,
-//                height: 40,
-//                child: FloatingActionButton(
-//                  onPressed: _decremenrCounter,
-//                  backgroundColor: Colors.red,
-//                  tooltip: 'Increment',
-//                  child: Icon(Icons.remove),
-//                ),
-//              ),
-//            ],
-//          ),
-//        ],
-//      ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.shifting,
         items: const <BottomNavigationBarItem>[
