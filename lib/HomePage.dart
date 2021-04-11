@@ -2,8 +2,11 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mori_breath/searchAndTag/search.dart';
 import 'src/locations.dart' as locations;
 import 'package:kumi_popup_window/kumi_popup_window.dart';
+import 'searchAndTag/tag.dart';
+import 'package:animations/animations.dart';
 
 //TODO 搜尋葉面 tag葉面 搜尋清單layout 地圖中間顯示地區
 //冠宇超屌
@@ -17,7 +20,8 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
 //  Completer<GoogleMapController> _controller = Completer();
 
   static final CameraPosition _kGooglePlex = CameraPosition(
@@ -25,8 +29,11 @@ class _HomePageState extends State<HomePage> {
     zoom: 14.4746,
   );
 
-  List<bool> selectBool = [false, false, false];
+//  List<bool> selectBool = [false, false, false];
   int _selectedIndex = 1;
+
+//  List<Widget> tag = [];
+  Tag tag;
 
   List<Widget> list(BuildContext context) => <Widget>[
         // Home page
@@ -234,141 +241,51 @@ class _HomePageState extends State<HomePage> {
               children: [
                 Flexible(
                     flex: 2,
-                    child: TextField(
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.lightGreen,
-                            width: 4,
+                    child: OpenContainer(
+                      closedBuilder: (context, action) {
+                        return  Stack(children:[
+                          TextField(
+                          decoration: InputDecoration(
+                            filled: true,
+                            fillColor: Colors.white,
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.lightGreen,
+                                width: 4,
+                              ),
+                            ),
+                            prefixIcon: Icon(Icons.search),
+                            contentPadding: EdgeInsets.all(16.0),
+                            border: OutlineInputBorder(),
+                            hintText: '搜尋想看的植物',
                           ),
+                          controller: _chatController,
+                          onSubmitted:
+                              _submitText, // 綁定事件給_submitText這個Function
                         ),
-                        prefixIcon: Icon(Icons.search),
-                        contentPadding: EdgeInsets.all(16.0),
-                        border: OutlineInputBorder(),
-                        hintText: '搜尋想看的植物',
-                      ),
-                      controller: _chatController,
-                      onSubmitted: _submitText, // 綁定事件給_submitText這個Function
+                          Container(height: 55,color: Colors.white10,),
+                      ]);},
+                      transitionDuration: const Duration(seconds: 1),
+                      transitionType: ContainerTransitionType.fadeThrough,
+                      openBuilder: (context, action) {
+                        return SearchPage(tag:tag);
+                      },
                     )),
                 Container(
                     padding:
                         EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
                     child: CircleAvatar(
                         backgroundColor: Colors.lightGreen,
-                        child: IconButton(
-                            icon: Icon(
-                              Icons.list,
-                              color: Colors.white,
+                        child: TextButton(
+                            child: Text(
+                              "#",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 20),
                             ),
                             onPressed: () {
-                              showPopupWindow(
-                                context,
-                                offsetX: 80,
-                                offsetY: 75,
-                                //childSize:Size(240, 800),
-                                gravity: KumiPopupGravity.rightTop,
-                                //curve: Curves.elasticOut,
-                                duration: Duration(milliseconds: 300),
-                                bgColor: Colors.black.withOpacity(0),
-                                onShowStart: (pop) {
-                                  print("showStart");
-                                },
-                                onShowFinish: (pop) {
-                                  print("showFinish");
-                                },
-                                onDismissStart: (pop) {
-                                  print("dismissStart");
-                                },
-                                onDismissFinish: (pop) {
-                                  print("dismissFinish");
-                                },
-                                onClickOut: (pop) {
-                                  print("onClickOut");
-                                },
-                                onClickBack: (pop) {
-                                  print("onClickBack");
-                                },
-                                childFun: (pop) {
-                                  return StatefulBuilder(
-                                      key: GlobalKey(),
-                                      builder: (popContext, popState) {
-                                        return Container(
-                                            padding: EdgeInsets.all(10),
-                                            height: (selectBool.length) *
-                                                65.toDouble(),
-                                            width: 200,
-//                                            color: Colors.black54,
-                                            alignment: Alignment.center,
-                                            decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                border: Border.all(
-                                                    color: Colors.black)),
-                                            child: Column(
-                                              children: [
-                                                CheckboxListTile(
-                                                  checkColor: Colors.black,
-//                                                  activeColor: Colors.green,
-                                                  title: Text(
-                                                    "flower",
-                                                    style: TextStyle(
-                                                        color: Colors.black),
-                                                  ),
-//                                                  secondary: Icon(Icons.add),
-                                                  controlAffinity:
-                                                      ListTileControlAffinity
-                                                          .leading,
-                                                  value: selectBool[0],
-                                                  onChanged: (bool value) {
-                                                    popState(() {
-                                                      selectBool[0] = value;
-                                                    });
-                                                  },
-                                                ),
-                                                CheckboxListTile(
-                                                  checkColor: Colors.black,
-//                                                  activeColor: Colors.green,
-                                                  title: Text(
-                                                    "bird",
-                                                    style: TextStyle(
-                                                        color: Colors.black),
-                                                  ),
-                                                  controlAffinity:
-                                                      ListTileControlAffinity
-                                                          .leading,
-//                                                  secondary: Icon(Icons.add),
-                                                  value: selectBool[1],
-                                                  onChanged: (bool value) {
-                                                    popState(() {
-                                                      selectBool[1] = value;
-                                                    });
-                                                  },
-                                                ),
-                                                CheckboxListTile(
-                                                  checkColor: Colors.black,
-//                                                  activeColor: Colors.green,
-                                                  title: Text(
-                                                    "tree",
-                                                    style: TextStyle(
-                                                        color: Colors.black),
-                                                  ),
-                                                  controlAffinity:
-                                                      ListTileControlAffinity
-                                                          .leading,
-//                                                  secondary: Icon(Icons.add),
-                                                  value: selectBool[2],
-                                                  onChanged: (bool value) {
-                                                    popState(() {
-                                                      selectBool[2] = value;
-                                                    });
-                                                  },
-                                                ),
-                                              ],
-                                            ));
-                                      });
-                                },
-                              );
+                              setState(() {
+                                tag.showPopWindows(context);
+                              });
                             }))),
 //                CircleAvatar(
 //                    backgroundColor: Colors.lightGreen,
@@ -562,6 +479,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    tag = Tag();
   }
 
   final Map<String, Marker> _markers = {};
@@ -617,7 +535,7 @@ class _HomePageState extends State<HomePage> {
                     builder: (popContext, popState) {
                       return Container(
                           padding: EdgeInsets.all(10),
-                          height: MediaQuery.of(context).size.height/4,
+                          height: MediaQuery.of(context).size.height / 4,
 //                        width: 200,
 //                                            color: Colors.black54,
                           alignment: Alignment.center,
@@ -651,7 +569,9 @@ class _HomePageState extends State<HomePage> {
                                                     image: AssetImage(
                                                         "assets/a.png"),
                                                     fit: BoxFit.cover))),
-                                        Container(width: 10,),
+                                        Container(
+                                          width: 10,
+                                        ),
                                         Container(
                                             width: 200,
                                             height: 120,
@@ -672,9 +592,13 @@ class _HomePageState extends State<HomePage> {
                                                 ),
                                                 Row(
                                                   children: [
-                                                    Container(width: 20,),
+                                                    Container(
+                                                      width: 20,
+                                                    ),
                                                     Icon(Icons.clear),
-                                                    Container(width: 70,),
+                                                    Container(
+                                                      width: 70,
+                                                    ),
                                                     ElevatedButton(
                                                         onPressed: () =>
                                                             print("button"),
@@ -706,7 +630,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
       body: list(context).elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.shifting,
