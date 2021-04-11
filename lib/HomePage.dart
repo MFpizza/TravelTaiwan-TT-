@@ -502,6 +502,7 @@ class _HomePageState extends State<HomePage>
           ),
           icon: icona,
           onTap: () {
+            print("123");
             showPopupWindow(
               context,
 //            offsetX: MediaQuery.of(context).size.width,
@@ -556,8 +557,7 @@ class _HomePageState extends State<HomePage>
 //                                width: 300,
 //                                height: 100,
 //                                color:Colors.blue,
-                                  child: Flexible(
-                                    child: Row(
+                                  child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
@@ -609,7 +609,7 @@ class _HomePageState extends State<HomePage>
                                             )),
                                       ],
                                     ),
-                                  )),
+                                  ),
                             ],
                           ));
                     });
@@ -631,6 +631,7 @@ class _HomePageState extends State<HomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset:false,
       body: list(context).elementAt(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.shifting,

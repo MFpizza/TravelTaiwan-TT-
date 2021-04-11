@@ -14,6 +14,9 @@ class Tag {
   int size() {
     return list.length;
   }
+  List<String> nowHave(){
+    return list;
+  }
 
   void showPopWindows(BuildContext context) {
     showPopupWindow(
