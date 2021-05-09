@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1078774080618",
+    "project_id": "traveltaiwan-edb9d",
+    "storage_bucket": "traveltaiwan-edb9d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1078774080618:android:71e78f8e3fcfb47c865613",
+        "android_client_info": {
+          "package_name": "com.example.travel_taiwan"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1078774080618-pkcj9vedfmpgh8dn42oue9dephn3gonn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.travel_taiwan",
+            "certificate_hash": "2f255d5501d3e013299748c60062e6414bf77e95"
+          }
+        },
+        {
+          "client_id": "1078774080618-bhferudqdp4fhns76is5f06enib2cgje.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfTKGtCylgw8vQx6a9ZSEhpqZoIITzmMs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1078774080618-bhferudqdp4fhns76is5f06enib2cgje.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

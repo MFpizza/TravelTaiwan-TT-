@@ -7,9 +7,9 @@ import 'src/locations.dart' as locations;
 import 'package:kumi_popup_window/kumi_popup_window.dart';
 import 'searchAndTag/tag.dart';
 import 'package:animations/animations.dart';
-
+import 'page/firstPage.dart';
+import 'member/page.dart';
 //TODO 搜尋葉面 tag葉面 搜尋清單layout 地圖中間顯示地區
-//冠宇超屌
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
@@ -29,17 +29,9 @@ class _HomePageState extends State<HomePage>
     zoom: 14.4746,
   );
 
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
 
   Tag tag;
-
-  List<Widget> list(BuildContext context) => <Widget>[
-        firstPage(context),
-        mapPage(context),
-        memberPage(context),
-      ];
-
-  final TextEditingController _chatController = TextEditingController();
 
   void _submitText(String text) {
     print(text);
@@ -58,12 +50,11 @@ class _HomePageState extends State<HomePage>
       _selectedIndex = index;
     });
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: IndexedStack(index: _selectedIndex, children: list(context)),
+      body: IndexedStack(index: _selectedIndex, children: buildList(context)),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.shifting,
         items: const <BottomNavigationBarItem>[
@@ -89,172 +80,13 @@ class _HomePageState extends State<HomePage>
       ),
     );
   }
+  List<Widget> buildList(BuildContext context) {return <Widget>[
+    FirstPage(),
+    mapPage(context),
+    MemberPage(),
+  ];}
 
-  Widget firstPage(BuildContext context) {
-    return MediaQuery.removePadding(
-        context: context,
-        removeTop: true,
-        removeBottom: true,
-        child: SafeArea(
-            child: Container(
-                color: Colors.brown,
-                child: Column(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 80,
-                      color: Colors.green,
-                      alignment: Alignment.bottomLeft,
-                      child: Row(
-                        children: [FlutterLogo(size: 50), Text("motherFucApp")],
-                      ),
-                    ),
-                    Expanded(
-                        child: ListView(
-                      children: [
-                        Container(
-                            height: 60,
-                            color: Colors.white,
-                            alignment: Alignment.center,
-                            child: Column(
-                              children: [
-                                Expanded(child: FlutterLogo(size: 50)),
-                                Text("排行綁"),
-                              ],
-                            )),
-                        Container(
-                            color: Colors.purpleAccent,
-                            padding: EdgeInsets.all(5),
-                            height: 150,
-                            child: ListView(
-                              scrollDirection: Axis.horizontal,
-                              children: <Widget>[
-                                Container(
-                                  width: 160.0,
-                                  color: Colors.red,
-                                ),
-                                Container(
-                                  width: 160.0,
-                                  color: Colors.blue,
-                                ),
-                                Container(
-                                  width: 160.0,
-                                  color: Colors.green,
-                                ),
-                                Container(
-                                  width: 160.0,
-                                  color: Colors.yellow,
-                                ),
-                                Container(
-                                  width: 160.0,
-                                  color: Colors.orange,
-                                ),
-                              ],
-                            )),
-                        Container(
-                            color: Colors.orange,
-                            height: 300,
-                            alignment: Alignment.center,
-//                          padding: Padding,
-                            child: Container(
-                              height: 200,
-                              width: MediaQuery.of(context).size.width / 1.5,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                  border: Border.all(color: Colors.red),
-                                  color: Colors.white),
-                              child: Text("其他功能 Icon"),
-                            )),
-                        Container(
-                            height: 60,
-                            color: Colors.white,
-                            alignment: Alignment.center,
-                            child: Column(
-                              children: [
-                                Expanded(child: FlutterLogo(size: 50)),
-                                Text("排行綁"),
-                              ],
-                            )),
-                        Container(
-                            height: MediaQuery.of(context).size.width / 2.8,
-                            width: MediaQuery.of(context).size.width,
-                            color: Colors.yellow,
-                            alignment: Alignment.center,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                    height:
-                                        MediaQuery.of(context).size.width / 3,
-                                    width:
-                                        MediaQuery.of(context).size.width / 3,
-                                    color: Colors.green),
-                                Container(
-                                  width: MediaQuery.of(context).size.width / 10,
-                                ),
-                                Container(
-                                    height:
-                                        MediaQuery.of(context).size.width / 3,
-                                    width:
-                                        MediaQuery.of(context).size.width / 3,
-                                    color: Colors.red)
-                              ],
-                            )),
-                        Container(
-                            height: MediaQuery.of(context).size.width / 2.8,
-                            width: MediaQuery.of(context).size.width,
-                            color: Colors.yellow,
-                            alignment: Alignment.center,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                    height:
-                                        MediaQuery.of(context).size.width / 3,
-                                    width:
-                                        MediaQuery.of(context).size.width / 3,
-                                    color: Colors.green),
-                                Container(
-                                  width: MediaQuery.of(context).size.width / 10,
-                                ),
-                                Container(
-                                    height:
-                                        MediaQuery.of(context).size.width / 3,
-                                    width:
-                                        MediaQuery.of(context).size.width / 3,
-                                    color: Colors.red)
-                              ],
-                            )),
-                        Container(
-                            height: MediaQuery.of(context).size.width / 2.8,
-                            width: MediaQuery.of(context).size.width,
-                            color: Colors.yellow,
-                            alignment: Alignment.center,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                    height:
-                                        MediaQuery.of(context).size.width / 3,
-                                    width:
-                                        MediaQuery.of(context).size.width / 3,
-                                    color: Colors.green),
-                                Container(
-                                  width: MediaQuery.of(context).size.width / 10,
-                                ),
-                                Container(
-                                    height:
-                                        MediaQuery.of(context).size.width / 3,
-                                    width:
-                                        MediaQuery.of(context).size.width / 3,
-                                    color: Colors.red)
-                              ],
-                            )),
-                      ],
-                    )),
-                  ],
-                ))));
-  }
+
 
   Widget mapPage(BuildContext context) {
     return Container(
@@ -297,7 +129,6 @@ class _HomePageState extends State<HomePage>
                           border: OutlineInputBorder(),
                           hintText: '搜尋想看的植物',
                         ),
-                        controller: _chatController,
                         onSubmitted: _submitText, // 綁定事件給_submitText這個Function
                       ),
                       Container(
@@ -474,159 +305,5 @@ class _HomePageState extends State<HomePage>
     });
   }
 
-  Widget memberPage(BuildContext context) {
-    return MediaQuery.removePadding(
-        context: context,
-        removeTop: true,
-        removeBottom: true,
-        child: Container(
-          color: Colors.brown,
-          child: Column(
-            children: [
-              Container(
-                height: MediaQuery.of(context).size.height / 3,
-                alignment: Alignment.center,
-                color: Colors.blue,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircleAvatar(
-                      backgroundColor: Colors.purpleAccent,
-                      radius: 60,
-                    ),
-                    Container(
-                      width: 10,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          "ID:12345678",
-                          style: TextStyle(fontSize: 30),
-                        ),
-                        Text(
-                          "沈淡",
-                          style: TextStyle(fontSize: 30),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              Container(
-                  padding: EdgeInsets.all(10),
-                  color: Colors.white,
-                  height: 100,
-                  child: Row(
-                    children: [
-                      TextButton(
-                        child: Text(
-                          "收藏",
-                          style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 30,
-                              decoration: TextDecoration.underline,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        onPressed: () {
-                          print("收藏");
-                        },
-                      ),
-                      Text(
-                        "成就",
-                        style: TextStyle(fontSize: 30),
-                      ),
-                    ],
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  )),
-              Expanded(
-                child: Container(
-                    color: Colors.red,
-                    child: ListView(
-                      children: [
-                        Container(
-                            height: MediaQuery.of(context).size.width / 2.8,
-                            width: MediaQuery.of(context).size.width,
-                            color: Colors.yellow,
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.all(10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                    height:
-                                        MediaQuery.of(context).size.width / 3,
-                                    width:
-                                        MediaQuery.of(context).size.width / 3,
-                                    color: Colors.green),
-                                Container(
-                                  width: MediaQuery.of(context).size.width / 10,
-                                ),
-                                Container(
-                                    height:
-                                        MediaQuery.of(context).size.width / 3,
-                                    width:
-                                        MediaQuery.of(context).size.width / 3,
-                                    color: Colors.red)
-                              ],
-                            )),
-                        Container(
-                            height: MediaQuery.of(context).size.width / 2.8,
-                            width: MediaQuery.of(context).size.width,
-                            color: Colors.yellow,
-                            alignment: Alignment.center,
-                            padding: EdgeInsets.all(10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                    height:
-                                        MediaQuery.of(context).size.width / 3,
-                                    width:
-                                        MediaQuery.of(context).size.width / 3,
-                                    color: Colors.green),
-                                Container(
-                                  width: MediaQuery.of(context).size.width / 10,
-                                ),
-                                Container(
-                                    height:
-                                        MediaQuery.of(context).size.width / 3,
-                                    width:
-                                        MediaQuery.of(context).size.width / 3,
-                                    color: Colors.red)
-                              ],
-                            )),
-                        Container(
-                            height: MediaQuery.of(context).size.width / 2.8,
-                            width: MediaQuery.of(context).size.width,
-                            color: Colors.yellow,
-                            padding: EdgeInsets.all(10),
-                            alignment: Alignment.center,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                    height:
-                                        MediaQuery.of(context).size.width / 3,
-                                    width:
-                                        MediaQuery.of(context).size.width / 3,
-                                    color: Colors.green),
-                                Container(
-                                  width: MediaQuery.of(context).size.width / 10,
-                                ),
-                                Container(
-                                    height:
-                                        MediaQuery.of(context).size.width / 3,
-                                    width:
-                                        MediaQuery.of(context).size.width / 3,
-                                    color: Colors.red)
-                              ],
-                            )),
-                      ],
-                    )),
-              )
-            ],
-          ),
-        ));
-  }
+
 }

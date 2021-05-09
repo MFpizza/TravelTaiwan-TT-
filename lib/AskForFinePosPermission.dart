@@ -24,7 +24,7 @@ class _AskForFinePosPermissionState extends State<AskForFinePosPermission> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
         body:
         null
     );
