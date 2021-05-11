@@ -8,7 +8,7 @@ import 'package:kumi_popup_window/kumi_popup_window.dart';
 import 'searchAndTag/tag.dart';
 import 'package:animations/animations.dart';
 import 'page/firstPage.dart';
-import 'member/page.dart';
+import 'member/member.dart';
 //TODO 搜尋葉面 tag葉面 搜尋清單layout 地圖中間顯示地區
 
 class HomePage extends StatefulWidget {
