@@ -3,12 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mori_breath/searchAndTag/search.dart';
+import 'activity/activity.dart';
 import 'src/locations.dart' as locations;
 import 'package:kumi_popup_window/kumi_popup_window.dart';
 import 'searchAndTag/tag.dart';
 import 'package:animations/animations.dart';
 import 'page/firstPage.dart';
-import 'member/member.dart';
+import 'member/member.dart';import 'illustrate/illustrate.dart';
 //TODO 搜尋葉面 tag葉面 搜尋清單layout 地圖中間顯示地區
 
 class HomePage extends StatefulWidget {
@@ -44,7 +45,7 @@ class _HomePageState extends State<HomePage>
   }
 
   final Map<String, Marker> _markers = {};
-
+  bool drag=true;
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -54,13 +55,18 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      body: IndexedStack(index: _selectedIndex, children: buildList(context)),
+      body:drag==false? Stack(children: [IndexedStack(index: _selectedIndex, children: buildList(context)), dragBottom()]):IndexedStack(index: _selectedIndex, children: buildList(context)),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.shifting,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
+            backgroundColor: Colors.lightGreen,
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: '圖鑑',
             backgroundColor: Colors.lightGreen,
           ),
           BottomNavigationBarItem(
@@ -73,6 +79,11 @@ class _HomePageState extends State<HomePage>
             label: '會員專區',
             backgroundColor: Colors.lightGreen,
           ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.book),
+            label: '活動',
+            backgroundColor: Colors.lightGreen,
+          ),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.yellow,
@@ -82,8 +93,10 @@ class _HomePageState extends State<HomePage>
   }
   List<Widget> buildList(BuildContext context) {return <Widget>[
     FirstPage(),
+    Illustrate(),
     mapPage(context),
     MemberPage(),
+    Activity(),
   ];}
 
 
@@ -305,5 +318,22 @@ class _HomePageState extends State<HomePage>
     });
   }
 
-
+  Widget dragBottom(){
+    return DraggableScrollableSheet(
+      //initialChildSize:0.,
+      minChildSize: 0.1,
+      maxChildSize: 1,
+      builder:(BuildContext context, ScrollController scrollController) {
+      return Container(
+        decoration: BoxDecoration(color: Colors.blue[100],borderRadius: BorderRadius.vertical(top: Radius.circular(40.0))),
+        child: ListView.builder(
+          controller: scrollController,
+          itemCount: 25,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(title: Text('Item $index'));
+          },
+        ),
+      );
+    },);
+  }
 }

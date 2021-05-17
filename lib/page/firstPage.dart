@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:mori_breath/illustrate/illustrate.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
+
 // import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mori_breath/member/member.dart';
 
 class FirstPage extends StatefulWidget {
   _FirstPage createState() => _FirstPage();
@@ -7,6 +12,7 @@ class FirstPage extends StatefulWidget {
 
 class _FirstPage extends State<FirstPage> {
   int _selectedIndex = 0;
+  List<String> lis = ['薰衣草', '櫻花', '鬱金香'];
 
   List<Widget> buildList(BuildContext context) {
     return <Widget>[
@@ -38,133 +44,30 @@ class _FirstPage extends State<FirstPage> {
             ),
           ),
           Container(
-              height: 60,
-              color: Colors.white,
+              //color: Colors.purpleAccent,
+              // padding: EdgeInsets.all(5),
               alignment: Alignment.center,
-              child: Column(
-                children: [
-                  Expanded(child: FlutterLogo(size: 50)),
-                  Text("排行綁"),
-                ],
+              height: MediaQuery.of(context).size.width * 0.5,
+              child: Swiper(
+               // autoplay: true,
+                itemCount: 3,
+                itemBuilder: (BuildContext context, int index) {
+                  return orderContain(lis.elementAt(index), index);
+                },
+                viewportFraction: 0.4,
+                scale: 0.7,
               )),
-          Container(
-              color: Colors.purpleAccent,
-              padding: EdgeInsets.all(5),
-              height: 150,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: <Widget>[
-                  Container(
-                    width: 160.0,
-                    color: Colors.red,
-                  ),
-                  Container(
-                    width: 160.0,
-                    color: Colors.blue,
-                  ),
-                  Container(
-                    width: 160.0,
-                    color: Colors.green,
-                  ),
-                  Container(
-                    width: 160.0,
-                    color: Colors.yellow,
-                  ),
-                  Container(
-                    width: 160.0,
-                    color: Colors.orange,
-                  ),
-                ],
-              )),
-          Container(
-              color: Colors.orange,
-              height: 300,
-              alignment: Alignment.center,
-//                          padding: Padding,
-              child: Container(
-                height: 200,
-                width: MediaQuery.of(context).size.width / 1.5,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                    border: Border.all(color: Colors.red), color: Colors.white),
-                child: Text("其他功能 Icon"),
-              )),
-          Container(
-              height: 60,
-              color: Colors.white,
-              alignment: Alignment.center,
-              child: Column(
-                children: [
-                  Expanded(child: FlutterLogo(size: 50)),
-                  Text("排行綁"),
-                ],
-              )),
-          Container(
-              height: MediaQuery.of(context).size.width / 2.8,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.yellow,
-              alignment: Alignment.center,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                      height: MediaQuery.of(context).size.width / 3,
-                      width: MediaQuery.of(context).size.width / 3,
-                      color: Colors.green),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 10,
-                  ),
-                  Container(
-                      height: MediaQuery.of(context).size.width / 3,
-                      width: MediaQuery.of(context).size.width / 3,
-                      color: Colors.red)
-                ],
-              )),
-          Container(
-              height: MediaQuery.of(context).size.width / 2.8,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.yellow,
-              alignment: Alignment.center,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                      height: MediaQuery.of(context).size.width / 3,
-                      width: MediaQuery.of(context).size.width / 3,
-                      color: Colors.green),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 10,
-                  ),
-                  Container(
-                      height: MediaQuery.of(context).size.width / 3,
-                      width: MediaQuery.of(context).size.width / 3,
-                      color: Colors.red)
-                ],
-              )),
-          Container(
-              height: MediaQuery.of(context).size.width / 2.8,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.yellow,
-              alignment: Alignment.center,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                      height: MediaQuery.of(context).size.width / 3,
-                      width: MediaQuery.of(context).size.width / 3,
-                      color: Colors.green),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 10,
-                  ),
-                  Container(
-                      height: MediaQuery.of(context).size.width / 3,
-                      width: MediaQuery.of(context).size.width / 3,
-                      color: Colors.red)
-                ],
-              )),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [containa('玫瑰'), VerticalDivider(), containa('蓮花')],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [containa('向日葵'), VerticalDivider(), containa('蘭花')],
+          ),
         ],
       ),
-      ListView(
+      Column(
         children: [
           Container(
             height: 50,
@@ -191,168 +94,21 @@ class _FirstPage extends State<FirstPage> {
               ],
             ),
           ),
-          // GridView(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2), children: [
-          //   Container(
-          //       height: MediaQuery.of(context).size.width / 3,
-          //       width: MediaQuery.of(context).size.width / 3,
-          //       color: Colors.green),
-          //   Container(
-          //     width: MediaQuery.of(context).size.width / 10,
-          //   ),
-          //   Container(
-          //       height: MediaQuery.of(context).size.width / 3,
-          //       width: MediaQuery.of(context).size.width / 3,
-          //       color: Colors.red)
-          // ],),
-          Container(
-              height: MediaQuery.of(context).size.width / 2.8,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.yellow,
-              alignment: Alignment.center,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                      height: MediaQuery.of(context).size.width / 3,
-                      width: MediaQuery.of(context).size.width / 3,
-                      color: Colors.green),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 10,
-                  ),
-                  Container(
-                      height: MediaQuery.of(context).size.width / 3,
-                      width: MediaQuery.of(context).size.width / 3,
-                      color: Colors.red)
-                ],
-              )),
-          Container(
-              height: MediaQuery.of(context).size.width / 2.8,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.yellow,
-              alignment: Alignment.center,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                      height: MediaQuery.of(context).size.width / 3,
-                      width: MediaQuery.of(context).size.width / 3,
-                      color: Colors.green),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 10,
-                  ),
-                  Container(
-                      height: MediaQuery.of(context).size.width / 3,
-                      width: MediaQuery.of(context).size.width / 3,
-                      color: Colors.red)
-                ],
-              )),
-          Container(
-            height: MediaQuery.of(context).size.width / 2.8,
-            width: MediaQuery.of(context).size.width,
-            color: Colors.yellow,
-            alignment: Alignment.center,
-            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Container(
-                  height: MediaQuery.of(context).size.width / 3,
-                  width: MediaQuery.of(context).size.width / 3,
-                  color: Colors.green),
-              Container(
-                width: MediaQuery.of(context).size.width / 10,
-              ),
-              Container(
-                  height: MediaQuery.of(context).size.width / 3,
-                  width: MediaQuery.of(context).size.width / 3,
-                  color: Colors.red)
-            ]),
-            // FutureBuilder(
-            //   //future: users.doc(user.email).get(),
-            //   builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-            //     if (snapshot.hasError) {
-            //      print("error");
-            //      return buildListForRecommend();
-            //
-            //     }
-            //
-            //     if (snapshot.connectionState == ConnectionState.done) {
-            //
-            //       return buildListForRecommend();
-            //     }
-            //
-            //     return buildListForRecommend();
-            //   },)
+          Expanded(
+            child: GridView.builder(
+                // scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2),
+                itemCount: myMap.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return containa(myMap.keys.elementAt(index));
+                }),
           )
         ],
       )
     ];
   }
-
-  // Widget buildListForRecommend(){
-  //   return ListView(children: [
-  //     Container(
-  //         height: MediaQuery.of(context).size.width / 2.8,
-  //         width: MediaQuery.of(context).size.width,
-  //         color: Colors.yellow,
-  //         alignment: Alignment.center,
-  //         child: Row(
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: [
-  //             Container(
-  //                 height: MediaQuery.of(context).size.width / 3,
-  //                 width: MediaQuery.of(context).size.width / 3,
-  //                 color: Colors.green),
-  //             Container(
-  //               width: MediaQuery.of(context).size.width / 10,
-  //             ),
-  //             Container(
-  //                 height: MediaQuery.of(context).size.width / 3,
-  //                 width: MediaQuery.of(context).size.width / 3,
-  //                 color: Colors.red)
-  //           ],
-  //         )),
-  //     Container(
-  //         height: MediaQuery.of(context).size.width / 2.8,
-  //         width: MediaQuery.of(context).size.width,
-  //         color: Colors.yellow,
-  //         alignment: Alignment.center,
-  //         child: Row(
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: [
-  //             Container(
-  //                 height: MediaQuery.of(context).size.width / 3,
-  //                 width: MediaQuery.of(context).size.width / 3,
-  //                 color: Colors.green),
-  //             Container(
-  //               width: MediaQuery.of(context).size.width / 10,
-  //             ),
-  //             Container(
-  //                 height: MediaQuery.of(context).size.width / 3,
-  //                 width: MediaQuery.of(context).size.width / 3,
-  //                 color: Colors.red)
-  //           ],
-  //         )),
-  //     Container(
-  //         height: MediaQuery.of(context).size.width / 2.8,
-  //         width: MediaQuery.of(context).size.width,
-  //         color: Colors.yellow,
-  //         alignment: Alignment.center,
-  //         child: Row(
-  //           mainAxisAlignment: MainAxisAlignment.center,
-  //           children: [
-  //             Container(
-  //                 height: MediaQuery.of(context).size.width / 3,
-  //                 width: MediaQuery.of(context).size.width / 3,
-  //                 color: Colors.green),
-  //             Container(
-  //               width: MediaQuery.of(context).size.width / 10,
-  //             ),
-  //             Container(
-  //                 height: MediaQuery.of(context).size.width / 3,
-  //                 width: MediaQuery.of(context).size.width / 3,
-  //                 color: Colors.red)
-  //           ],
-  //         )),
-  //   ],);
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -365,6 +121,87 @@ class _FirstPage extends State<FirstPage> {
         )),
       ),
       body: IndexedStack(index: _selectedIndex, children: buildList(context)),
+    );
+  }
+
+  Widget orderContain(String a, int index) {
+    return Stack(
+      children: [
+        containa(a),
+        Container(
+          //color: Colors.orangeAccent,
+          alignment: Alignment.bottomLeft,
+          child: Image(image:AssetImage('assets/${index+1}-01.png'),width: 90,height: 70,),
+        ),
+      ],
+    );
+  }
+
+  Widget containa(String a) {
+    return Container(
+      width: 170,
+      height: 170,
+      child: Column(
+        children: [
+          Stack(children: [
+            Container(
+              width: 130,
+              height: 130,
+              decoration: BoxDecoration(
+                  image: DecorationImage(
+                      image: AssetImage('assets/material/$a.jpg'),
+                      fit: BoxFit.cover)),
+            ),
+            Container(
+              padding: EdgeInsets.all(5),
+              width: 130,
+              height: 130,
+              alignment: Alignment.bottomRight,
+              child: Container(
+                //  color: Colors.orangeAccent,
+                width: 40,
+                height: 40,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.solidHeart,
+                      color: Colors.white,
+                    ),
+                    myMap[a]
+                        ? IconButton(
+                            icon: FaIcon(
+                              FontAwesomeIcons.solidHeart,
+                              color: Colors.red,
+                              size: IconThemeData.fallback().size - 5,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                myMap[a] = !myMap[a];
+                              });
+                            },
+                          )
+                        : IconButton(
+                            icon: FaIcon(
+                              FontAwesomeIcons.solidHeart,
+                              color: Colors.grey,
+                              size: IconThemeData.fallback().size - 5,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                myMap[a] = !myMap[a];
+                              });
+                            },
+                          )
+                  ],
+                ),
+              ),
+            ),
+          ]),
+          Divider(),
+          Text(a)
+        ],
+      ),
     );
   }
 }

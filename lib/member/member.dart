@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mori_breath/member/setting.dart';
 
 class MemberPage extends StatefulWidget {
@@ -20,6 +21,13 @@ class _MemberPage extends State<MemberPage> {
 
   @override
   Widget build(BuildContext context) {
+    var lis = [];
+    myMap.forEach((key, value) {
+      if (value == true) {
+        lis.insert(0, key);
+      }
+    });
+
     return Scaffold(
         body: SingleChildScrollView(
       child: Container(
@@ -76,7 +84,10 @@ class _MemberPage extends State<MemberPage> {
                                 Icons.settings,
                                 color: Colors.black87,
                               ),
-                              onPressed: () => Navigator.of(context).push(MaterialPageRoute(builder: (context){return SettingPage();})),
+                              onPressed: () => Navigator.of(context)
+                                  .push(MaterialPageRoute(builder: (context) {
+                                return SettingPage();
+                              })),
                             )),
                       )
                     ],
@@ -119,104 +130,109 @@ class _MemberPage extends State<MemberPage> {
                   "全部",
                   style: TextStyle(color: Colors.white, fontSize: 20),
                 ),
-                onPressed: () => showDialog(context: context, builder: (BuildContext context) {
-                  return AlertDialog(
-                    //title: Text('AlertDialog Title'),
-                    content: SingleChildScrollView(
-                      child: ListBody(
-                        children: <Widget>[
-                         TextButton(child:Center(child:Text("花")),),
-                          TextButton(child:Center(child:Text("鳥")),),
-                        ],
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return AlertDialog(
+                      //title: Text('AlertDialog Title'),
+                      content: SingleChildScrollView(
+                        child: ListBody(
+                          children: <Widget>[
+                            TextButton(
+                              child: Center(child: Text("花")),
+                            ),
+                            TextButton(
+                              child: Center(child: Text("鳥")),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                   // actions: <Widget>[
-                   //    TextButton(
-                   //      child: Text('Approve'),
-                   //      onPressed: () {
-                   //        Navigator.of(context).pop();
-                   //      },
-                   //    ),
-                   //  ],
-                  );
-                },),
+                      // actions: <Widget>[
+                      //    TextButton(
+                      //      child: Text('Approve'),
+                      //      onPressed: () {
+                      //        Navigator.of(context).pop();
+                      //      },
+                      //    ),
+                      //  ],
+                    );
+                  },
+                ),
               ),
             ),
             Expanded(
               child:
-              //TODO 可以添加 listView Bar
-              Container(
-                  color: Colors.white,
-                  child: ListView(
-                    children: [
-                      Container(
-                          height: MediaQuery.of(context).size.width / 2.8,
-                          width: MediaQuery.of(context).size.width,
-                          color: Colors.yellow,
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                  height: MediaQuery.of(context).size.width / 3,
-                                  width: MediaQuery.of(context).size.width / 3,
-                                  color: Colors.green),
-                              Container(
-                                width: MediaQuery.of(context).size.width / 10,
+                  //TODO 可以添加 listView Bar
+                  Container(
+                color: Colors.white,
+                child: GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+                    itemCount:lis.length,
+                    itemBuilder: (BuildContext context,int index){
+                    return  Container(
+                      width: 170,
+                      height: 170,
+                      child: Column(
+                        children: [
+                          Stack(children: [
+                            Container(
+                              width: 130,
+                              height: 130,
+                              decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      image: AssetImage('assets/material/${lis.elementAt(index)}.jpg'),
+                                      fit: BoxFit.cover)),
+                            ),
+                            Container(
+                              padding: EdgeInsets.all(5),
+                              width: 130,
+                              height: 130,
+                              alignment: Alignment.bottomRight,
+                              child: Container(
+                                //  color: Colors.orangeAccent,
+                                width: 40,
+                                height: 40,
+                                child: Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    FaIcon(
+                                      FontAwesomeIcons.solidHeart,
+                                      color: Colors.white,
+                                    ),
+                                    myMap[lis.elementAt(index)]
+                                        ? IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.solidHeart,
+                                        color: Colors.red,
+                                        size: IconThemeData.fallback().size - 5,
+                                      ),
+                                      onPressed: () {setState(() {
+                                        myMap[lis.elementAt(index)] = !myMap[lis.elementAt(index)];
+                                      });},
+                                    )
+                                        : IconButton(
+                                      icon: FaIcon(
+                                        FontAwesomeIcons.solidHeart,
+                                        color: Colors.grey,
+                                        size: IconThemeData.fallback().size - 5,
+                                      ),
+                                      onPressed: () {setState(() {
+                                        myMap[lis.elementAt(index)] = !myMap[lis.elementAt(index)];
+                                      });},
+                                    )
+                                  ],
+                                ),
                               ),
-                              Container(
-                                  height: MediaQuery.of(context).size.width / 3,
-                                  width: MediaQuery.of(context).size.width / 3,
-                                  color: Colors.red)
-                            ],
-                          )),
-                      Container(
-                          height: MediaQuery.of(context).size.width / 2.8,
-                          width: MediaQuery.of(context).size.width,
-                          color: Colors.yellow,
-                          alignment: Alignment.center,
-                          padding: EdgeInsets.all(10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                  height: MediaQuery.of(context).size.width / 3,
-                                  width: MediaQuery.of(context).size.width / 3,
-                                  color: Colors.green),
-                              Container(
-                                width: MediaQuery.of(context).size.width / 10,
-                              ),
-                              Container(
-                                  height: MediaQuery.of(context).size.width / 3,
-                                  width: MediaQuery.of(context).size.width / 3,
-                                  color: Colors.red)
-                            ],
-                          )),
-                      Container(
-                          height: MediaQuery.of(context).size.width / 2.8,
-                          width: MediaQuery.of(context).size.width,
-                          color: Colors.yellow,
-                          padding: EdgeInsets.all(10),
-                          alignment: Alignment.center,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                  height: MediaQuery.of(context).size.width / 3,
-                                  width: MediaQuery.of(context).size.width / 3,
-                                  color: Colors.green),
-                              Container(
-                                width: MediaQuery.of(context).size.width / 10,
-                              ),
-                              Container(
-                                  height: MediaQuery.of(context).size.width / 3,
-                                  width: MediaQuery.of(context).size.width / 3,
-                                  color: Colors.red)
-                            ],
-                          )),
-                    ],
-                  )),
+                            ),
+                          ]),
+                          Divider(),
+                          Text(lis.elementAt(index))
+                        ],
+                      ),
+                    );
+                })
+
+              ),
             )
           ],
         ),
@@ -242,3 +258,14 @@ class _MemberPage extends State<MemberPage> {
     });
   }
 }
+
+Map<String, bool> myMap = {
+  "玫瑰": false,
+  "薰衣草": false,
+  "向日葵": false,
+  "蘭花": false,
+  "蓮花": false,
+  "櫻花": false,
+  "鬱金香": false,
+};
+
