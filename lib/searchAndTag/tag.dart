@@ -1,13 +1,27 @@
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:kumi_popup_window/kumi_popup_window.dart';
+import '../models/Species.dart';
 
 class Tag {
-  List<String> list = ['flower','adad','ff'];
+  List<String> list = [];
   void minusTag(int index,BuildContext context,Function popState) {
     popState((){list.removeAt(index);});
   }
 
+  void minusTagOffline(String value) {
+    list.removeAt(list.indexWhere((element2) => element2==value));
+  }
+
+  bool contain(String value) {
+    if(list.indexWhere((element2) => element2==value) == -1)
+      return false;
+    else
+      return true;
+  }
+
   List<String> addTag(String value) {
+    list.insert(0, value);
     return list;
   }
 
@@ -18,7 +32,7 @@ class Tag {
     return list;
   }
 
-  void showPopWindows(BuildContext context) {
+  void showPopWindows(BuildContext context, Function setMarkers, Function getMarkers) {
     showPopupWindow(
       context,
       offsetX: 80,
@@ -51,7 +65,7 @@ class Tag {
             key: GlobalKey(),
             builder: (popContext, popState) {
               return Container(
-                  //padding: EdgeInsets.all(10),
+                //padding: EdgeInsets.all(10),
                   height: list.length!=0?(list.length + 1) * //TODO 123
                       65.toDouble():2*65.toDouble(),
                   width: 200,
@@ -61,14 +75,14 @@ class Tag {
                       color: Colors.white,
                       border: Border.all(color: Colors.black)),
                   child: Column(
-                    children: this.returnTagWidget(context,popState),
+                    children: this.returnTagWidget(context,popState, setMarkers, getMarkers),
                   ));
             });
       },
     );
   }
 
-  List<Widget> returnTagWidget(BuildContext context,Function popState) {
+  List<Widget> returnTagWidget(BuildContext context,Function popState, Function setMarkers, Function getMarkers) {
     List<Widget> wList = <Widget>[];
     wList.add(Container(
       color: Colors.green,
@@ -81,7 +95,7 @@ class Tag {
     ));
     if(list.length==0){
       wList.add(ListTile(
-        title:Text("尚未選取Tag",textAlign: TextAlign.center,)
+          title:Text("尚未選取Tag",textAlign: TextAlign.center,)
       )
       );
     }
@@ -95,7 +109,16 @@ class Tag {
         trailing: CircleAvatar(
           child: TextButton(
             child: Text("-", style: TextStyle(fontSize: 20, color: Colors.white)),
-            onPressed: () => minusTag(list.indexWhere((element2) => element2==element),context,popState),
+            onPressed: () {
+              fetchSpecies(element).then((query_result) async {
+                Map<String, Marker> tmp = getMarkers();
+                query_result.forEach((specie) {
+                  tmp.remove(specie.marker_id.toString());
+                  setMarkers(tmp);
+                });
+              });
+              minusTag(list.indexWhere((element2) => element2==element),context,popState);
+            },
           ),
           backgroundColor: Colors.black,
         ),
