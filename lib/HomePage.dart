@@ -3,8 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mori_breath/searchAndTag/search.dart';
-import 'src/locations.dart' as locations;
-import 'package:kumi_popup_window/kumi_popup_window.dart';
 import 'searchAndTag/tag.dart';
 import 'package:animations/animations.dart';
 import 'page/firstPage.dart';
@@ -43,7 +41,18 @@ class _HomePageState extends State<HomePage>
     tag = Tag();
   }
 
-  final Map<String, Marker> _markers = {};
+  Map<String, Marker> _markers = {};
+  GoogleMapController _mapController;
+
+  Map<String, Marker> getMarkers() {
+    return _markers;
+  }
+
+  void setMarkers(Map<String, Marker> markers) {
+    setState(() {
+      _markers = markers;
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -89,6 +98,9 @@ class _HomePageState extends State<HomePage>
 
 
   Widget mapPage(BuildContext context) {
+
+    BuildContext mapContext = context;
+
     return Container(
         child: Stack(children: [
       GoogleMap(
@@ -140,7 +152,7 @@ class _HomePageState extends State<HomePage>
                   transitionDuration: const Duration(seconds: 1),
                   transitionType: ContainerTransitionType.fadeThrough,
                   openBuilder: (context, action) {
-                    return SearchPage(tag: tag);
+                    return SearchPage(tag: tag, getMarkers: getMarkers, setMarkers: setMarkers, mapController: _mapController, mapContext: mapContext);
                   },
                 )),
             Container(
@@ -154,7 +166,7 @@ class _HomePageState extends State<HomePage>
                         ),
                         onPressed: () {
                           setState(() {
-                            tag.showPopWindows(context);
+                            tag.showPopWindows(context, setMarkers, getMarkers);
                           });
                         }))),
 //                CircleAvatar(
@@ -171,137 +183,8 @@ class _HomePageState extends State<HomePage>
   }
 
   Future<void> _onMapCreated(GoogleMapController controller) async {
-    final googleOffices = await locations.getGoogleOffices();
-//    print(googleOffices);
-    final iconA = await BitmapDescriptor.fromAssetImage(
-        ImageConfiguration(size: Size(0.3, 0.3)), 'assets/a.png');
     setState(() {
-      _markers.clear();
-      for (final office in googleOffices.offices) {
-//        print(office.name);
-        final marker = Marker(
-          markerId: MarkerId(office.name),
-          position: LatLng(office.lat, office.lng),
-          infoWindow: InfoWindow(
-            title: "櫻花",
-            snippet: office.address,
-          ),
-          icon: iconA,
-          onTap: () {
-            showPopupWindow(
-              context,
-//            offsetX: MediaQuery.of(context).size.width,
-              offsetY: 60,
-//              childSize: Size(300, 900),
-              gravity: KumiPopupGravity.centerBottom,
-              //curve: Curves.elasticOut,
-              duration: Duration(milliseconds: 300),
-              bgColor: Colors.black.withOpacity(0),
-              onShowStart: (pop) {
-                print("showStart");
-              },
-              onShowFinish: (pop) {
-                print("showFinish");
-              },
-              onDismissStart: (pop) {
-                controller.hideMarkerInfoWindow(MarkerId(office.name));
-                print("dismissStart");
-              },
-              onDismissFinish: (pop) {
-                print("dismissFinish");
-              },
-              onClickOut: (pop) {
-                print("onClickOut");
-              },
-              onClickBack: (pop) {
-                print("onClickBack");
-              },
-              childFun: (pop) {
-                return StatefulBuilder(
-                    key: GlobalKey(),
-                    builder: (popContext, popState) {
-                      return Container(
-                          padding: EdgeInsets.all(10),
-                          height: MediaQuery.of(context).size.height / 4,
-//                        width: 200,
-//                                            color: Colors.black54,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.vertical(
-                                  top: Radius.elliptical(50, 50)),
-                              border: Border.all(color: Colors.black)),
-                          child: Column(
-                            children: [
-                              Container(
-                                height: 15,
-                              ),
-                              Container(
-                                alignment: Alignment.bottomCenter,
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 10.0, vertical: 10.0),
-//                                width: 300,
-//                                height: 100,
-//                                color:Colors.blue,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                        width: 130,
-                                        height: 130,
-                                        decoration: BoxDecoration(
-                                            image: DecorationImage(
-                                                image:
-                                                    AssetImage("assets/a.png"),
-                                                fit: BoxFit.cover))),
-                                    Container(
-                                      width: 10,
-                                    ),
-                                    Container(
-                                        width: 200,
-                                        height: 120,
-//                                            color: Colors.yellow,
-                                        child: Column(
-//                                              mainAxisAlignment: MainAxisAlignment.center,
-//                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              "櫻花",
-                                              style: TextStyle(fontSize: 30),
-                                            ),
-                                            Text(
-                                              "addresssssssssssssssss",
-                                              style: TextStyle(fontSize: 15),
-                                            ),
-                                            Row(
-                                              children: [
-                                                Container(
-                                                  width: 20,
-                                                ),
-                                                Icon(Icons.clear),
-                                                Container(
-                                                  width: 70,
-                                                ),
-                                                ElevatedButton(
-                                                    onPressed: () =>
-                                                        print("button"),
-                                                    child: Text("前往"))
-                                              ],
-                                            )
-                                          ],
-                                        )),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ));
-                    });
-              },
-            );
-          },
-        );
-        _markers[office.name] = marker;
-      }
+      _mapController = controller;
     });
   }
 
