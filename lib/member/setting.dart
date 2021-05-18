@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SettingPage extends StatelessWidget {
@@ -10,13 +11,17 @@ class SettingPage extends StatelessWidget {
       body: ListView(
         children: [
           ListTile(
-            title: Text("帳號設定"),
-          ),ListTile(
             title: Text("製作團隊"),
-          ),ListTile(
+          ),
+          ListTile(
             title: Text("資料來源"),
-          ),ListTile(
+          ),
+          ListTile(
             title: Text("登出"),
+            onTap: () {
+              FirebaseAuth.instance.signOut();
+              Navigator.of(context).pop();
+            },
           )
         ],
       ),

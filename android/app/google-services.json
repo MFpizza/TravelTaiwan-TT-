@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "1078774080618-74e5cellft7g8cu9sl9gbr1ptr6crh02.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.travel_taiwan",
+            "certificate_hash": "8f8bf5951c7726080e5c90ef2c0cfe326d6424cb"
+          }
+        },
+        {
           "client_id": "1078774080618-pkcj9vedfmpgh8dn42oue9dephn3gonn.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

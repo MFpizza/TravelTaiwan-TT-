@@ -5,6 +5,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mori_breath/member/member.dart';
+import 'package:mori_breath/core/core.dart';
 
 class FirstPage extends StatefulWidget {
   _FirstPage createState() => _FirstPage();
@@ -13,6 +14,12 @@ class FirstPage extends StatefulWidget {
 class _FirstPage extends State<FirstPage> {
   int _selectedIndex = 0;
   List<String> lis = ['薰衣草', '櫻花', '鬱金香'];
+
+  void changeState(){
+    setState(() {
+
+    });
+  }
 
   List<Widget> buildList(BuildContext context) {
     return <Widget>[
@@ -59,11 +66,11 @@ class _FirstPage extends State<FirstPage> {
               )),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [containa('玫瑰'), VerticalDivider(), containa('蓮花')],
+            children: [createContainer('玫瑰',changeState,context), VerticalDivider(), createContainer('蓮花',changeState,context)],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [containa('向日葵'), VerticalDivider(), containa('蘭花')],
+            children: [createContainer('向日葵',changeState,context), VerticalDivider(), createContainer('蘭花',changeState,context)],
           ),
         ],
       ),
@@ -102,7 +109,7 @@ class _FirstPage extends State<FirstPage> {
                     crossAxisCount: 2),
                 itemCount: myMap.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return containa(myMap.keys.elementAt(index));
+                  return createContainer(myMap.keys.elementAt(index),changeState,context);
                 }),
           )
         ],
@@ -127,7 +134,7 @@ class _FirstPage extends State<FirstPage> {
   Widget orderContain(String a, int index) {
     return Stack(
       children: [
-        containa(a),
+        createContainer(a,changeState,context),
         Container(
           //color: Colors.orangeAccent,
           alignment: Alignment.bottomLeft,
@@ -137,71 +144,71 @@ class _FirstPage extends State<FirstPage> {
     );
   }
 
-  Widget containa(String a) {
-    return Container(
-      width: 170,
-      height: 170,
-      child: Column(
-        children: [
-          Stack(children: [
-            Container(
-              width: 130,
-              height: 130,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage('assets/material/$a.jpg'),
-                      fit: BoxFit.cover)),
-            ),
-            Container(
-              padding: EdgeInsets.all(5),
-              width: 130,
-              height: 130,
-              alignment: Alignment.bottomRight,
-              child: Container(
-                //  color: Colors.orangeAccent,
-                width: 40,
-                height: 40,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    FaIcon(
-                      FontAwesomeIcons.solidHeart,
-                      color: Colors.white,
-                    ),
-                    myMap[a]
-                        ? IconButton(
-                            icon: FaIcon(
-                              FontAwesomeIcons.solidHeart,
-                              color: Colors.red,
-                              size: IconThemeData.fallback().size - 5,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                myMap[a] = !myMap[a];
-                              });
-                            },
-                          )
-                        : IconButton(
-                            icon: FaIcon(
-                              FontAwesomeIcons.solidHeart,
-                              color: Colors.grey,
-                              size: IconThemeData.fallback().size - 5,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                myMap[a] = !myMap[a];
-                              });
-                            },
-                          )
-                  ],
-                ),
-              ),
-            ),
-          ]),
-          Divider(),
-          Text(a)
-        ],
-      ),
-    );
-  }
+  // Widget containa(String a) {
+  //   return Container(
+  //     width: 170,
+  //     height: 170,
+  //     child: Column(
+  //       children: [
+  //         Stack(children: [
+  //           Container(
+  //             width: 130,
+  //             height: 130,
+  //             decoration: BoxDecoration(
+  //                 image: DecorationImage(
+  //                     image: AssetImage('assets/material/$a.jpg'),
+  //                     fit: BoxFit.cover)),
+  //           ),
+  //           Container(
+  //             padding: EdgeInsets.all(5),
+  //             width: 130,
+  //             height: 130,
+  //             alignment: Alignment.bottomRight,
+  //             child: Container(
+  //               //  color: Colors.orangeAccent,
+  //               width: 40,
+  //               height: 40,
+  //               child: Stack(
+  //                 alignment: Alignment.center,
+  //                 children: [
+  //                   FaIcon(
+  //                     FontAwesomeIcons.solidHeart,
+  //                     color: Colors.white,
+  //                   ),
+  //                   myMap[a]
+  //                       ? IconButton(
+  //                           icon: FaIcon(
+  //                             FontAwesomeIcons.solidHeart,
+  //                             color: Colors.red,
+  //                             size: IconThemeData.fallback().size - 5,
+  //                           ),
+  //                           onPressed: () {
+  //                             setState(() {
+  //                               myMap[a] = !myMap[a];
+  //                             });
+  //                           },
+  //                         )
+  //                       : IconButton(
+  //                           icon: FaIcon(
+  //                             FontAwesomeIcons.solidHeart,
+  //                             color: Colors.grey,
+  //                             size: IconThemeData.fallback().size - 5,
+  //                           ),
+  //                           onPressed: () {
+  //                             setState(() {
+  //                               myMap[a] = !myMap[a];
+  //                             });
+  //                           },
+  //                         )
+  //                 ],
+  //               ),
+  //             ),
+  //           ),
+  //         ]),
+  //         Divider(),
+  //         Text(a)
+  //       ],
+  //     ),
+  //   );
+  // }
 }
