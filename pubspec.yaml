@@ -24,7 +24,6 @@ dependencies:
   flutter:
     sdk: flutter
   json_serializable: ^3.3.0
-
   font_awesome_flutter: ^9.0.0
   google_maps_flutter: ^2.0.1
   transparent_image: ^2.0.0

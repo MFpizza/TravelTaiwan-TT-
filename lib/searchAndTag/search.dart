@@ -1,11 +1,20 @@
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mori_breath/models/SpeciesType.dart';
 import 'tag.dart';
+import 'addMinusBtn.dart';
 
 class SearchPage extends StatefulWidget {
-  final Tag tag;
 
-  SearchPage({Key key, this.tag}) : super(key: key);
+  final BuildContext mapContext;
+  final Tag tag;
+  final Function getMarkers;
+  final Function setMarkers;
+  final GoogleMapController mapController;
+
+  SearchPage({Key key, @required this.tag, @required this.getMarkers, @required this.setMarkers, @required this.mapController, @required this.mapContext}) : super(key: key);
 
   _SearchPage createState() => _SearchPage(tag: tag);
 }
@@ -15,7 +24,6 @@ class _SearchPage extends State<SearchPage> {
 
   _SearchPage({this.tag});
 //  final FocusNode _focus = FocusNode();
-  final TextEditingController _chatController = TextEditingController();
   List<String> history = ['aa', '23'];
 
   @override
@@ -33,26 +41,48 @@ class _SearchPage extends State<SearchPage> {
                 Flexible(
                     flex: 2,
                     child: Stack(children: [
-                      TextField(
-                        decoration: InputDecoration(
-                          prefixIcon:Icon(Icons.arrow_back_outlined),
-                          filled: true,
-                          fillColor: Colors.white,
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.lightGreen,
-                              width: 4,
+                      TypeAheadField(
+                          textFieldConfiguration: TextFieldConfiguration(
+                            autofocus: false,
+                            decoration: InputDecoration(
+                              prefixIcon:Icon(Icons.arrow_back_outlined),
+                              filled: true,
+                              fillColor: Colors.white,
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: Colors.lightGreen,
+                                  width: 4,
+                                ),
+                              ),
+                              //                      prefixIcon: IconButton(
+                              //                        icon: Icon(Icons.arrow_back_sharp),
+                              //                        onPressed: () => Navigator.of(context).pop(),
+                              //                      ),
+                              contentPadding: EdgeInsets.all(16.0),
+                              border: OutlineInputBorder(),
+                              hintText: '搜尋想看的植物',
                             ),
                           ),
-//                      prefixIcon: IconButton(
-//                        icon: Icon(Icons.arrow_back_sharp),
-//                        onPressed: () => Navigator.of(context).pop(),
-//                      ),
-                          contentPadding: EdgeInsets.all(16.0),
-                          border: OutlineInputBorder(),
-                          hintText: '搜尋想看的植物',
-                        ),
-                        controller: _chatController,
+                          suggestionsCallback: (pattern) async {
+                            return await fetchSpeciesType(pattern);
+                          },
+                          itemBuilder: (context, item) {
+                            return ListTile(
+                              title: Text(item.name_ch),
+                              trailing: CircleAvatar(
+                                child: addMinusBtn(tags: tag, name_ch: item.name_ch, setMarkers: widget.setMarkers, getMarkers: widget.getMarkers, mapController: widget.mapController, mapContext: widget.mapContext),
+                                backgroundColor: Colors.black,
+                              ),
+                            );
+                          },
+                          onSuggestionSelected: (suggestion) {
+                            //debugPrint(suggestion.name_ch);
+                          },
+                          keepSuggestionsOnSuggestionSelected: true,
+                          noItemsFoundBuilder: (BuildContext context) =>
+                              ListTile(
+                                title: Text("查無結果!"),
+                              )
                       ),
                       InkWell(child:Container(
                         width: 40,
@@ -76,7 +106,7 @@ class _SearchPage extends State<SearchPage> {
                             ),
                             onPressed: () {
                               setState(() {
-                                tag.showPopWindows(context);
+                                tag.showPopWindows(context, widget.setMarkers, widget.getMarkers);
                               });
                             }))),
               ],
