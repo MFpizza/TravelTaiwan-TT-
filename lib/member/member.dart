@@ -1,8 +1,11 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:mori_breath/illustrate/illustrate.dart';
+
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
@@ -370,10 +373,28 @@ class _Member extends State<Member> {
         });
       } else {
         print('User is sign in!');
-        setState(() {
-          user = (_user);
-          notLogin = false;
-        });
+        DocumentSnapshot snapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(_user.email)
+            .get();
+        if (snapshot.data() == null) {
+          setState(() {
+            user = (_user);
+            notLogin = false;
+          });
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(_user.email)
+              .set(myMap);
+        } else if (snapshot.data().length < species.length) {
+          //TODO 如果新增illustrate的東西要同步上去firebase
+        } else {
+          setState(() {
+            user = (_user);
+            notLogin = false;
+            myMap = snapshot.data();
+          });
+        }
       }
     });
   }

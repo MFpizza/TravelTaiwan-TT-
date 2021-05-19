@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mori_breath/searchAndTag/search.dart';
 import 'activity/activity.dart';
-import 'src/locations.dart' as locations;
-import 'package:kumi_popup_window/kumi_popup_window.dart';
 import 'searchAndTag/tag.dart';
 import 'package:animations/animations.dart';
 import 'page/firstPage.dart';

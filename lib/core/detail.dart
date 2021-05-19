@@ -17,7 +17,7 @@ class _Detail extends State<Detail> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
+    //FirebaseFirestore firestore = FirebaseFirestore.instance;
   }
 
   @override

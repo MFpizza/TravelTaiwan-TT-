@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mori_breath/illustrate/illustrate.dart';
@@ -15,9 +16,15 @@ class _FirstPage extends State<FirstPage> {
   int _selectedIndex = 0;
   List<String> lis = ['薰衣草', '櫻花', '鬱金香'];
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Firebase.initializeApp();
+  }
+
   void changeState(){
     setState(() {
-
     });
   }
 
@@ -119,16 +126,34 @@ class _FirstPage extends State<FirstPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Center(
-            child: Text(
-          "LOGO",
-          style: TextStyle(fontSize: 30),
-        )),
-      ),
-      body: IndexedStack(index: _selectedIndex, children: buildList(context)),
+    return FutureBuilder(
+      // Initialize FlutterFire:
+      future: Firebase.initializeApp(),
+      builder: (context, snapshot) {
+        // Check for errors
+        // if (snapshot.hasError) {
+        //   return SomethingWentWrong();
+        // }
+
+        // Once complete, show your application
+        if (snapshot.connectionState == ConnectionState.done) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Center(
+                  child: Text(
+                    "LOGO",
+                    style: TextStyle(fontSize: 30),
+                  )),
+            ),
+            body: IndexedStack(index: _selectedIndex, children: buildList(context)),
+          );
+        }
+
+        // Otherwise, show something whilst waiting for initialization to complete
+        return Container(color: Colors.white,child: CircularProgressIndicator(),);
+      },
     );
+
   }
 
   Widget orderContain(String a, int index) {
