@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,7 +7,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mori_breath/core/detail.dart';
 import 'package:mori_breath/member/member.dart';
 
-import '../core/core.dart';
 List<String> species = [
   '燈稱花',
   '樹杞',
@@ -147,7 +147,7 @@ class _Illustrate extends State<Illustrate> {
                               });
                         } else {
                           myMap[a] = !myMap[a];
-                          // FirebaseFirestore.instance.collection('users').doc(user.email).update({a:myMap[a]});
+                          FirebaseFirestore.instance.collection('users').doc(user.email).update({a:myMap[a]});
                           changeState();
                         }
                       },
@@ -186,7 +186,7 @@ class _Illustrate extends State<Illustrate> {
                               });
                         } else {
                           myMap[a] = !myMap[a];
-                          // FirebaseFirestore.instance.collection('users').doc(user.email).update({a:myMap[a]});
+                          FirebaseFirestore.instance.collection('users').doc(user.email).update({a:myMap[a]});
                           changeState();
                         }
                       },

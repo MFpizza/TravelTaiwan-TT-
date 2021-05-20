@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,7 +7,6 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mori_breath/core/detail.dart';
 import 'package:mori_breath/member/member.dart';
-import 'package:mori_breath/core/core.dart';
 
 class FirstPage extends StatefulWidget {
   _FirstPage createState() => _FirstPage();
@@ -28,6 +28,9 @@ class _FirstPage extends State<FirstPage> {
       setState(() {
         _initialized = true;
         user = FirebaseAuth.instance.currentUser;
+      });
+      FirebaseAuth.instance.authStateChanges().listen((User _user) async {
+        user = (_user);
       });
     } catch(e) {
       // Set `_error` state to true if Firebase initialization fails
@@ -113,7 +116,7 @@ class _FirstPage extends State<FirstPage> {
                               });
                         } else {
                           myMap[a] = !myMap[a];
-                          // FirebaseFirestore.instance.collection('users').doc(user.email).update({a:myMap[a]});
+                           FirebaseFirestore.instance.collection('users').doc(user.email).update({a:myMap[a]});
                           changeState();
                         }
                       },
@@ -152,7 +155,7 @@ class _FirstPage extends State<FirstPage> {
                               });
                         } else {
                           myMap[a] = !myMap[a];
-                          // FirebaseFirestore.instance.collection('users').doc(user.email).update({a:myMap[a]});
+                           FirebaseFirestore.instance.collection('users').doc(user.email).update({a:myMap[a]});
                           changeState();
                         }
                       },
