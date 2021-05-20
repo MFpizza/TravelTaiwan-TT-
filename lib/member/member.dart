@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -234,7 +233,7 @@ class _MemberPage extends State<MemberPage> {
 
 class Favorite {}
 
-Map<String, bool> myMap = {
+Map<String, dynamic> myMap = {
   "玫瑰": false,
   "薰衣草": false,
   "向日葵": false,
@@ -373,7 +372,11 @@ class _Member extends State<Member> {
         });
       } else {
         print('User is sign in!');
-        DocumentSnapshot snapshot = await FirebaseFirestore.instance
+        setState(() {
+          user = (_user);
+          notLogin = false;
+        });
+      /*  DocumentSnapshot snapshot = await FirebaseFirestore.instance
             .collection('users')
             .doc(_user.email)
             .get();
@@ -394,7 +397,7 @@ class _Member extends State<Member> {
             notLogin = false;
             myMap = snapshot.data();
           });
-        }
+        }*/
       }
     });
   }

@@ -2,7 +2,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import '../models/Species.dart';
 import 'tag.dart';
-
+import 'package:webview_flutter/webview_flutter.dart';import 'dart:io';
 class addMinusBtn extends StatefulWidget {
 
   final BuildContext mapContext;
@@ -38,6 +38,7 @@ class _addMinusBtn extends State<addMinusBtn> {
         added = false;
       });
     }
+    if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
   }
 
   @override
@@ -77,13 +78,13 @@ class _addMinusBtn extends State<addMinusBtn> {
                 ),
                 icon: iconA,
                 onTap: () {
-                  showModalBottomSheet(context: widget.mapContext, builder: (context) {
-                    return Column(children: [
-                      ListTile(
-                        title: Text(specie.name_ch),
-                        subtitle: Text(specie.name_sci),
-                      ),
-                    ],);
+                  showModalBottomSheet(
+                      isScrollControlled:true,
+                      context: widget.mapContext, builder: (context) {
+                    return Container(
+                      height: MediaQuery.of(context).size.height*0.8,
+                      width: MediaQuery.of(context).size.width,
+                    );
                   });
                 },
               );

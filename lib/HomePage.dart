@@ -24,8 +24,8 @@ class _HomePageState extends State<HomePage>
 //  Completer<GoogleMapController> _controller = Completer();
 
   static final CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(25.033398077340603, 121.56489870934207),
-    zoom: 14.4746,
+    target: LatLng(23.796298894661422, 121.01559192402948),
+    zoom:7.9746,
   );
 
   int _selectedIndex = 0;
