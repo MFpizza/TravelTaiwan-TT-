@@ -32,23 +32,24 @@ class _FirstPage extends State<FirstPage> {
       FirebaseAuth.instance.authStateChanges().listen((User _user) async {
         user = (_user);
       });
-    } catch(e) {
+    } catch (e) {
       // Set `_error` state to true if Firebase initialization fails
       setState(() {
         _error = true;
       });
     }
   }
+
   @override
   void initState() {
     initializeFlutterFire();
     super.initState();
   }
 
-  void changeState(){
-    setState(() {
-    });
+  void changeState() {
+    setState(() {});
   }
+
   Widget createContain(String a, Function changeState, BuildContext context) {
     myMap.putIfAbsent(a, () => false);
     return Container(
@@ -68,8 +69,8 @@ class _FirstPage extends State<FirstPage> {
               ),
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (BuildContext context) => Detail(
-                    name: a,
-                  ))),
+                        name: a,
+                      ))),
             ),
             Container(
               padding: EdgeInsets.all(5),
@@ -89,77 +90,83 @@ class _FirstPage extends State<FirstPage> {
                     ),
                     myMap[a]
                         ? IconButton(
-                      icon: FaIcon(
-                        FontAwesomeIcons.solidHeart,
-                        color: Colors.red,
-                        size: IconThemeData.fallback().size - 5,
-                      ),
-                      onPressed: () {
-                        if (user == null) {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return CupertinoAlertDialog(
-                                  content: Text(
-                                    "請先進行登入才能收藏",
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  actions: <Widget>[
-                                    CupertinoButton(
-                                      child: Text("知道了"),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                  ],
-                                );
-                              });
-                        } else {
-                          myMap[a] = !myMap[a];
-                           FirebaseFirestore.instance.collection('users').doc(user.email).update({a:myMap[a]});
-                          changeState();
-                        }
-                      },
-                    )
+                            icon: FaIcon(
+                              FontAwesomeIcons.solidHeart,
+                              color: Colors.red,
+                              size: IconThemeData.fallback().size - 5,
+                            ),
+                            onPressed: () {
+                              if (user == null) {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return CupertinoAlertDialog(
+                                        content: Text(
+                                          "請先進行登入才能收藏",
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                        actions: <Widget>[
+                                          CupertinoButton(
+                                            child: Text("知道了"),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              } else {
+                                myMap[a] = !myMap[a];
+                                FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(user.email)
+                                    .update({a: myMap[a]});
+                                changeState();
+                              }
+                            },
+                          )
                         : IconButton(
-                      icon: FaIcon(
-                        FontAwesomeIcons.solidHeart,
-                        color: Colors.grey,
-                        size: IconThemeData.fallback().size - 5,
-                      ),
-                      onPressed: () {
-                        if (FirebaseAuth.instance.currentUser == null) {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return CupertinoAlertDialog(
-                                  content: Text(
-                                    "請先進行登入才能收藏",
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  actions: <Widget>[
-                                    // CupertinoButton(
-                                    //   child: Text("取消"),
-                                    //   onPressed: () {
-                                    //     Navigator.pop(context);
-                                    //   },
-                                    // ),
-                                    CupertinoButton(
-                                      child: Text("知道了"),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                  ],
-                                );
-                              });
-                        } else {
-                          myMap[a] = !myMap[a];
-                           FirebaseFirestore.instance.collection('users').doc(user.email).update({a:myMap[a]});
-                          changeState();
-                        }
-                      },
-                    )
+                            icon: FaIcon(
+                              FontAwesomeIcons.solidHeart,
+                              color: Colors.grey,
+                              size: IconThemeData.fallback().size - 5,
+                            ),
+                            onPressed: () {
+                              if (FirebaseAuth.instance.currentUser == null) {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return CupertinoAlertDialog(
+                                        content: Text(
+                                          "請先進行登入才能收藏",
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                        actions: <Widget>[
+                                          // CupertinoButton(
+                                          //   child: Text("取消"),
+                                          //   onPressed: () {
+                                          //     Navigator.pop(context);
+                                          //   },
+                                          // ),
+                                          CupertinoButton(
+                                            child: Text("知道了"),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              } else {
+                                myMap[a] = !myMap[a];
+                                FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(user.email)
+                                    .update({a: myMap[a]});
+                                changeState();
+                              }
+                            },
+                          )
                   ],
                 ),
               ),
@@ -172,9 +179,104 @@ class _FirstPage extends State<FirstPage> {
     );
   }
 
+  int nowshow = 0;
 
   List<Widget> buildList(BuildContext context) {
     return <Widget>[
+      Container(
+        height: MediaQuery.of(context).size.height * 0.8,
+        width: MediaQuery.of(context).size.width,
+        decoration: new BoxDecoration(
+          color: Colors.white,
+          borderRadius: new BorderRadius.only(
+            topLeft: const Radius.circular(25.0),
+            topRight: const Radius.circular(25.0),
+          ),
+        ),
+        child: ListView(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height * 0.25,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.yellow,
+              child: Row(
+                children: [
+                  Container(
+                    alignment: Alignment.center,
+                    width: MediaQuery.of(context).size.width / 2,
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width / 3,
+                      height: MediaQuery.of(context).size.width / 3,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.red),
+                    ),
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width / 2,
+                    height: MediaQuery.of(context).size.height * 0.3,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("123"),
+                        Text("123"),
+                        Text("123"),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+                width: MediaQuery.of(context).size.width,
+                height: 70,
+                child: Row(
+                  children: [
+                    TextButton(
+                      child: Text(
+                        "收藏",
+                        style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 20,
+                            decoration: TextDecoration.underline,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          nowshow = 0;
+                        });
+                      },
+                    ),
+                    TextButton(
+                      child: Text(
+                        "成就",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          nowshow = 1;
+                        });
+                      },
+                    ),
+                  ],
+                  mainAxisAlignment: MainAxisAlignment.center,
+                )),
+            IndexedStack(index: nowshow, children: [
+              Container(
+                color: Colors.red,
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+              ),
+              Container(
+                  color: Colors.orangeAccent,
+                  height: MediaQuery.of(context).size.height,
+                  width: MediaQuery.of(context).size.width)
+            ])
+          ],
+        ),
+      ),
       ListView(
         children: [
           Container(
@@ -208,7 +310,7 @@ class _FirstPage extends State<FirstPage> {
               alignment: Alignment.center,
               height: MediaQuery.of(context).size.width * 0.5,
               child: Swiper(
-               // autoplay: true,
+                // autoplay: true,
                 itemCount: 3,
                 itemBuilder: (BuildContext context, int index) {
                   return orderContain(lis.elementAt(index), index);
@@ -218,69 +320,79 @@ class _FirstPage extends State<FirstPage> {
               )),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [createContain('玫瑰',changeState,context), VerticalDivider(), createContain('蓮花',changeState,context)],
+            children: [
+              createContain('玫瑰', changeState, context),
+              VerticalDivider(),
+              createContain('蓮花', changeState, context)
+            ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [createContain('向日葵',changeState,context), VerticalDivider(), createContain('蘭花',changeState,context)],
+            children: [
+              createContain('向日葵', changeState, context),
+              VerticalDivider(),
+              createContain('蘭花', changeState, context)
+            ],
           ),
         ],
       ),
-      Column(
-        children: [
-          Container(
-            height: 50,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedIndex = 0;
-                      });
-                    },
-                    child: Text("排行榜")),
-                Container(
-                  width: MediaQuery.of(context).size.width / 8,
-                ),
-                ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedIndex = 1;
-                      });
-                    },
-                    child: Text("推薦"))
-              ],
-            ),
-          ),
-          Expanded(
-            child: GridView.builder(
-                // scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 2),
-                itemCount: myMap.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return createContain(myMap.keys.elementAt(index),changeState,context);
-                }),
-          )
-        ],
-      )
+      // Column(
+      //   children: [
+      //     Container(
+      //       height: 50,
+      //       child: Row(
+      //         mainAxisAlignment: MainAxisAlignment.center,
+      //         children: [
+      //           ElevatedButton(
+      //               onPressed: () {
+      //                 setState(() {
+      //                   _selectedIndex = 0;
+      //                 });
+      //               },
+      //               child: Text("排行榜")),
+      //           Container(
+      //             width: MediaQuery.of(context).size.width / 8,
+      //           ),
+      //           ElevatedButton(
+      //               onPressed: () {
+      //                 setState(() {
+      //                   _selectedIndex = 1;
+      //                 });
+      //               },
+      //               child: Text("推薦"))
+      //         ],
+      //       ),
+      //     ),
+      //     Expanded(
+      //       child: GridView.builder(
+      //           // scrollDirection: Axis.vertical,
+      //           shrinkWrap: true,
+      //           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+      //               crossAxisCount: 2),
+      //           itemCount: myMap.length,
+      //           itemBuilder: (BuildContext context, int index) {
+      //             return createContain(myMap.keys.elementAt(index),changeState,context);
+      //           }),
+      //     )
+      //   ],
+      // )
     ];
   }
 
   @override
   Widget build(BuildContext context) {
     if (!_initialized) {
-      return Center(child: CircularProgressIndicator(),);
+      return Center(
+        child: CircularProgressIndicator(),
+      );
     }
     return Scaffold(
       appBar: AppBar(
         title: Center(
             child: Text(
-              "LOGO",
-              style: TextStyle(fontSize: 30),
-            )),
+          "LOGO",
+          style: TextStyle(fontSize: 30),
+        )),
       ),
       body: IndexedStack(index: _selectedIndex, children: buildList(context)),
     );
@@ -289,11 +401,15 @@ class _FirstPage extends State<FirstPage> {
   Widget orderContain(String a, int index) {
     return Stack(
       children: [
-        createContain(a,changeState,context),
+        createContain(a, changeState, context),
         Container(
           //color: Colors.orangeAccent,
           alignment: Alignment.bottomLeft,
-          child: Image(image:AssetImage('assets/${index+1}-01.png'),width: 90,height: 70,),
+          child: Image(
+            image: AssetImage('assets/${index + 1}-01.png'),
+            width: 90,
+            height: 70,
+          ),
         ),
       ],
     );
