@@ -68,7 +68,7 @@ class _FirstPage extends State<FirstPage> {
                         fit: BoxFit.cover)),
               ),
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => Detail(
+                  builder: (BuildContext context) => SpeciesPage(
                         name: a,
                       ))),
             ),
@@ -183,100 +183,6 @@ class _FirstPage extends State<FirstPage> {
 
   List<Widget> buildList(BuildContext context) {
     return <Widget>[
-      Container(
-        height: MediaQuery.of(context).size.height * 0.8,
-        width: MediaQuery.of(context).size.width,
-        decoration: new BoxDecoration(
-          color: Colors.white,
-          borderRadius: new BorderRadius.only(
-            topLeft: const Radius.circular(25.0),
-            topRight: const Radius.circular(25.0),
-          ),
-        ),
-        child: ListView(
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height * 0.25,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.yellow,
-              child: Row(
-                children: [
-                  Container(
-                    alignment: Alignment.center,
-                    width: MediaQuery.of(context).size.width / 2,
-                    height: MediaQuery.of(context).size.height * 0.3,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width / 3,
-                      height: MediaQuery.of(context).size.width / 3,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: Colors.red),
-                    ),
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width / 2,
-                    height: MediaQuery.of(context).size.height * 0.3,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("123"),
-                        Text("123"),
-                        Text("123"),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-                width: MediaQuery.of(context).size.width,
-                height: 70,
-                child: Row(
-                  children: [
-                    TextButton(
-                      child: Text(
-                        "收藏",
-                        style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 20,
-                            decoration: TextDecoration.underline,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          nowshow = 0;
-                        });
-                      },
-                    ),
-                    TextButton(
-                      child: Text(
-                        "成就",
-                        style: TextStyle(fontSize: 20),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          nowshow = 1;
-                        });
-                      },
-                    ),
-                  ],
-                  mainAxisAlignment: MainAxisAlignment.center,
-                )),
-            IndexedStack(index: nowshow, children: [
-              Container(
-                color: Colors.red,
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-              ),
-              Container(
-                  color: Colors.orangeAccent,
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width)
-            ])
-          ],
-        ),
-      ),
       ListView(
         children: [
           Container(
@@ -336,46 +242,46 @@ class _FirstPage extends State<FirstPage> {
           ),
         ],
       ),
-      // Column(
-      //   children: [
-      //     Container(
-      //       height: 50,
-      //       child: Row(
-      //         mainAxisAlignment: MainAxisAlignment.center,
-      //         children: [
-      //           ElevatedButton(
-      //               onPressed: () {
-      //                 setState(() {
-      //                   _selectedIndex = 0;
-      //                 });
-      //               },
-      //               child: Text("排行榜")),
-      //           Container(
-      //             width: MediaQuery.of(context).size.width / 8,
-      //           ),
-      //           ElevatedButton(
-      //               onPressed: () {
-      //                 setState(() {
-      //                   _selectedIndex = 1;
-      //                 });
-      //               },
-      //               child: Text("推薦"))
-      //         ],
-      //       ),
-      //     ),
-      //     Expanded(
-      //       child: GridView.builder(
-      //           // scrollDirection: Axis.vertical,
-      //           shrinkWrap: true,
-      //           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-      //               crossAxisCount: 2),
-      //           itemCount: myMap.length,
-      //           itemBuilder: (BuildContext context, int index) {
-      //             return createContain(myMap.keys.elementAt(index),changeState,context);
-      //           }),
-      //     )
-      //   ],
-      // )
+      Column(
+        children: [
+          Container(
+            height: 50,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _selectedIndex = 0;
+                      });
+                    },
+                    child: Text("排行榜")),
+                Container(
+                  width: MediaQuery.of(context).size.width / 8,
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _selectedIndex = 1;
+                      });
+                    },
+                    child: Text("推薦"))
+              ],
+            ),
+          ),
+          Expanded(
+            child: GridView.builder(
+                // scrollDirection: Axis.vertical,
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2),
+                itemCount: myMap.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return createContain(myMap.keys.elementAt(index),changeState,context);
+                }),
+          )
+        ],
+      )
     ];
   }
 

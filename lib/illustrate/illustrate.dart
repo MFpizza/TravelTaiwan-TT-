@@ -19,7 +19,9 @@ List<String> species = [
   '咖啡樹',
   '昆欄樹',
   '梅花草',
+  '臺灣百合'
 ];
+
 class Illustrate extends StatefulWidget {
   _Illustrate createState() => _Illustrate();
 }
@@ -28,6 +30,7 @@ class _Illustrate extends State<Illustrate> {
   bool _initialized = false;
   bool _error = false;
   User user;
+
   // Define an async function to initialize FlutterFire
   void initializeFlutterFire() async {
     try {
@@ -35,9 +38,43 @@ class _Illustrate extends State<Illustrate> {
       await Firebase.initializeApp();
       setState(() {
         _initialized = true;
-        user = FirebaseAuth.instance.currentUser;
       });
-    } catch(e) {
+      FirebaseAuth.instance.authStateChanges().listen((User _user) async {
+        if (_user == null) {
+          print('User is currently signed out!');
+          setState(() {
+            user = null;
+          });
+        } else {
+          print('User is sign in!');
+          setState(() {
+            user = (_user);
+          });
+          /*  DocumentSnapshot snapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(_user.email)
+            .get();
+        if (snapshot.data() == null) {
+          setState(() {
+            user = (_user);
+            notLogin = false;
+          });
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(_user.email)
+              .set(myMap);
+        } else if (snapshot.data().length < species.length) {
+          //TODO 如果新增illustrate的東西要同步上去firebase
+        } else {
+          setState(() {
+            user = (_user);
+            notLogin = false;
+            myMap = snapshot.data();
+          });
+        }*/
+        }
+      });
+    } catch (e) {
       // Set `_error` state to true if Firebase initialization fails
       setState(() {
         _error = true;
@@ -55,7 +92,9 @@ class _Illustrate extends State<Illustrate> {
   Widget build(BuildContext context) {
     // Show a loader until FlutterFire is initialized
     if (!_initialized) {
-    return Center(child: CircularProgressIndicator(),);
+      return Center(
+        child: CircularProgressIndicator(),
+      );
     }
     return Scaffold(
         appBar: AppBar(
@@ -92,9 +131,9 @@ class _Illustrate extends State<Illustrate> {
                         fit: BoxFit.cover)),
               ),
               onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (BuildContext context) => Detail(
-                    name: a,
-                  ))),
+                  builder: (BuildContext context) => SpeciesPage(
+                        name: a,
+                      ))),
             ),
             Container(
               padding: EdgeInsets.all(5),
@@ -114,83 +153,89 @@ class _Illustrate extends State<Illustrate> {
                     ),
                     myMap[a]
                         ? IconButton(
-                      icon: FaIcon(
-                        FontAwesomeIcons.solidHeart,
-                        color: Colors.red,
-                        size: IconThemeData.fallback().size - 5,
-                      ),
-                      onPressed: () {
-                        if (user == null) {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return CupertinoAlertDialog(
-                                  content: Text(
-                                    "請先進行登入才能收藏",
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  actions: <Widget>[
-                                    // CupertinoButton(
-                                    //   child: Text("取消"),
-                                    //   onPressed: () {
-                                    //     Navigator.pop(context);
-                                    //   },
-                                    // ),
-                                    CupertinoButton(
-                                      child: Text("知道了"),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                  ],
-                                );
-                              });
-                        } else {
-                          myMap[a] = !myMap[a];
-                          FirebaseFirestore.instance.collection('users').doc(user.email).update({a:myMap[a]});
-                          changeState();
-                        }
-                      },
-                    )
+                            icon: FaIcon(
+                              FontAwesomeIcons.solidHeart,
+                              color: Colors.red,
+                              size: IconThemeData.fallback().size - 5,
+                            ),
+                            onPressed: () {
+                              if (user == null) {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return CupertinoAlertDialog(
+                                        content: Text(
+                                          "請先進行登入才能收藏",
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                        actions: <Widget>[
+                                          // CupertinoButton(
+                                          //   child: Text("取消"),
+                                          //   onPressed: () {
+                                          //     Navigator.pop(context);
+                                          //   },
+                                          // ),
+                                          CupertinoButton(
+                                            child: Text("知道了"),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              } else {
+                                myMap[a] = !myMap[a];
+                                FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(user.email)
+                                    .update({a: myMap[a]});
+                                changeState();
+                              }
+                            },
+                          )
                         : IconButton(
-                      icon: FaIcon(
-                        FontAwesomeIcons.solidHeart,
-                        color: Colors.grey,
-                        size: IconThemeData.fallback().size - 5,
-                      ),
-                      onPressed: () {
-                        if (FirebaseAuth.instance.currentUser == null) {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return CupertinoAlertDialog(
-                                  content: Text(
-                                    "請先進行登入才能收藏",
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                  actions: <Widget>[
-                                    // CupertinoButton(
-                                    //   child: Text("取消"),
-                                    //   onPressed: () {
-                                    //     Navigator.pop(context);
-                                    //   },
-                                    // ),
-                                    CupertinoButton(
-                                      child: Text("知道了"),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                    ),
-                                  ],
-                                );
-                              });
-                        } else {
-                          myMap[a] = !myMap[a];
-                          FirebaseFirestore.instance.collection('users').doc(user.email).update({a:myMap[a]});
-                          changeState();
-                        }
-                      },
-                    )
+                            icon: FaIcon(
+                              FontAwesomeIcons.solidHeart,
+                              color: Colors.grey,
+                              size: IconThemeData.fallback().size - 5,
+                            ),
+                            onPressed: () {
+                              if (FirebaseAuth.instance.currentUser == null) {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return CupertinoAlertDialog(
+                                        content: Text(
+                                          "請先進行登入才能收藏",
+                                          style: TextStyle(fontSize: 20),
+                                        ),
+                                        actions: <Widget>[
+                                          // CupertinoButton(
+                                          //   child: Text("取消"),
+                                          //   onPressed: () {
+                                          //     Navigator.pop(context);
+                                          //   },
+                                          // ),
+                                          CupertinoButton(
+                                            child: Text("知道了"),
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              } else {
+                                myMap[a] = !myMap[a];
+                                FirebaseFirestore.instance
+                                    .collection('users')
+                                    .doc(user.email)
+                                    .update({a: myMap[a]});
+                                changeState();
+                              }
+                            },
+                          )
                   ],
                 ),
               ),
@@ -202,7 +247,6 @@ class _Illustrate extends State<Illustrate> {
       ),
     );
   }
-
 
   void changeState() {
     setState(() {});

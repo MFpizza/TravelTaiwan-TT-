@@ -4,8 +4,8 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewExample extends StatefulWidget {
   final String url;
-  WebViewExample({@required this.url});
 
+  WebViewExample({@required this.url});
 
   @override
   WebViewExampleState createState() => WebViewExampleState(url: url);
@@ -13,6 +13,7 @@ class WebViewExample extends StatefulWidget {
 
 class WebViewExampleState extends State<WebViewExample> {
   final String url;
+
   WebViewExampleState({@required this.url});
 
   @override
@@ -24,8 +25,10 @@ class WebViewExampleState extends State<WebViewExample> {
 
   @override
   Widget build(BuildContext context) {
-    return WebView(
-      initialUrl:url,
-    );
+    return Scaffold(
+        appBar: AppBar(),
+        body: WebView(
+          initialUrl: url,
+        ));
   }
 }

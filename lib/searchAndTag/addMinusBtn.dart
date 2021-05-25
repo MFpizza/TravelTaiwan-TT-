@@ -1,5 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
+import 'package:mori_breath/core/detail.dart';
 import 'package:mori_breath/page/webView.dart';
 import '../models/Species.dart';
 import 'tag.dart';
@@ -75,7 +76,7 @@ class _addMinusBtn extends State<addMinusBtn> {
             final iconA = await BitmapDescriptor.fromAssetImage(
                 ImageConfiguration(size: Size(0.3, 0.3)), 'assets/a.png');
             query_result.forEach((specie) {
-            //  print(specie);
+              //  print(specie);
               final marker = Marker(
                 markerId: MarkerId(specie.marker_id.toString()),
                 position: LatLng(specie.Latitude, specie.Longitude),
@@ -110,7 +111,6 @@ class _addMinusBtn extends State<addMinusBtn> {
                                                 0.25,
                                         width:
                                             MediaQuery.of(context).size.width,
-                                        color: Colors.yellow,
                                         child: Row(
                                           children: [
                                             Container(
@@ -136,7 +136,7 @@ class _addMinusBtn extends State<addMinusBtn> {
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             20),
-                                                    color: Colors.red),
+                                                    image:DecorationImage(image: AssetImage('assets/material/${specie.name_ch}.jpg',),fit: BoxFit.cover)),
                                               ),
                                             ),
                                             Container(
@@ -154,8 +154,8 @@ class _addMinusBtn extends State<addMinusBtn> {
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
-                                                  Text("123"),
-                                                  Text("123"),
+                                                  Text(specie.name_ch,style: TextStyle(fontSize: 24),),
+                                                  Divider(),
                                                   Text("123"),
                                                 ],
                                               ),
@@ -163,6 +163,11 @@ class _addMinusBtn extends State<addMinusBtn> {
                                           ],
                                         ),
                                       ),
+                                      Divider(
+                                        height: 20,
+                                        thickness: 5,
+                                        indent: 20,
+                                        endIndent: 20,),
                                       Container(
                                           width:
                                               MediaQuery.of(context).size.width,
@@ -171,7 +176,7 @@ class _addMinusBtn extends State<addMinusBtn> {
                                             children: [
                                               TextButton(
                                                 child: Text(
-                                                  "收藏",
+                                                  "詳細資料",
                                                   style: TextStyle(
                                                       color: Colors.red,
                                                       fontSize: 20,
@@ -186,9 +191,10 @@ class _addMinusBtn extends State<addMinusBtn> {
                                                   });
                                                 },
                                               ),
+                                              VerticalDivider(),
                                               TextButton(
                                                 child: Text(
-                                                  "成就",
+                                                  "天氣",
                                                   style:
                                                       TextStyle(fontSize: 20),
                                                 ),
@@ -204,21 +210,24 @@ class _addMinusBtn extends State<addMinusBtn> {
                                           )),
                                       IndexedStack(index: nowshow, children: [
                                         Container(
-                                          color: Colors.red,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: Column(children: [ Detail(
+                                            name: specie.name_ch,
+                                          ),
+                                            Divider(),
+                                            SpeciesPhoto(
+                                              name: specie.name_ch,
+                                            )],),
+                                        ),
+                                        Container(
                                           height: MediaQuery.of(context)
                                               .size
                                               .height,
                                           width:
                                               MediaQuery.of(context).size.width,
-                                        ),
-                                        Container(
-                                           height: MediaQuery.of(context)
-                                                .size
-                                                .height,
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                          child: WebView(initialUrl: 'https://github.com/MFpizza/message_app',),)
+                                          color:Colors.green
+                                        )
                                       ])
                                     ],
                                   ),
