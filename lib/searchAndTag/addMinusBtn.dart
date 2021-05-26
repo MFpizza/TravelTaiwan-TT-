@@ -1,7 +1,8 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:mori_breath/core/detail.dart';
-import 'package:mori_breath/page/webView.dart';
+import 'package:mori_breath/weather/AQIBar.dart';
+import 'package:mori_breath/weather/UVBar.dart';
 import '../models/Species.dart';
 import 'tag.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -221,12 +222,15 @@ class _addMinusBtn extends State<addMinusBtn> {
                                             )],),
                                         ),
                                         Container(
-                                          height: MediaQuery.of(context)
-                                              .size
-                                              .height,
                                           width:
                                               MediaQuery.of(context).size.width,
-                                          color:Colors.green
+                                          child: Column(
+                                            children: [
+                                              UVBar(uv_value: 5),
+                                              AQIBar(aqi_value: 5),
+                                              SizedBox(height: 20)
+                                            ],
+                                          ),
                                         )
                                       ])
                                     ],
