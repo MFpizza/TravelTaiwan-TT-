@@ -7,6 +7,8 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mori_breath/core/detail.dart';
 import 'package:mori_breath/member/member.dart';
+import 'package:mori_breath/illustrate/illustrate.dart';
+import 'dart:math';
 
 class FirstPage extends StatefulWidget {
   _FirstPage createState() => _FirstPage();
@@ -181,7 +183,23 @@ class _FirstPage extends State<FirstPage> {
 
   int nowshow = 0;
 
+  List<int> randomNum(int many){
+    int maxNum= species.length;
+    Random random = Random();
+    List<int> lis=[];
+    for(int i=0;i<many;i++){
+      int rNum= random.nextInt(maxNum);
+      if(lis.contains(rNum)){
+        i--;
+        continue;
+      }
+      lis.add(rNum);
+    }
+    return lis;
+  }
+
   List<Widget> buildList(BuildContext context) {
+    List<int> lis2=randomNum(6);
     return <Widget>[
       ListView(
         children: [
@@ -275,9 +293,9 @@ class _FirstPage extends State<FirstPage> {
                 shrinkWrap: true,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2),
-                itemCount: myMap.length,
+                itemCount: lis2.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return createContain(myMap.keys.elementAt(index),changeState,context);
+                  return createContain(species.elementAt(lis2.elementAt(index)),changeState,context);
                 }),
           )
         ],

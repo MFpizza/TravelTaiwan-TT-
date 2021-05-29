@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mori_breath/core/detail.dart';
 import 'package:mori_breath/weather/AQIBar.dart';
 import 'package:mori_breath/weather/UVBar.dart';
+import 'package:mori_breath/weather/weather.dart';
 import '../models/Species.dart';
 import 'tag.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -75,8 +76,9 @@ class _addMinusBtn extends State<addMinusBtn> {
           fetchSpecies(widget.name_ch).then((query_result) async {
             Map<String, Marker> tmp = widget.getMarkers();
             final iconA = await BitmapDescriptor.fromAssetImage(
-                ImageConfiguration(size: Size(0.3, 0.3)), 'assets/a.png');
+                ImageConfiguration(size: Size(0.3, 0.3)), 'assets/marker.png');
             query_result.forEach((specie) {
+              // print(specie.Location.length);
               //  print(specie);
               final marker = Marker(
                 markerId: MarkerId(specie.marker_id.toString()),
@@ -91,151 +93,7 @@ class _addMinusBtn extends State<addMinusBtn> {
                       isScrollControlled: true,
                       context: widget.mapContext,
                       builder: (context) {
-                        return StatefulBuilder(
-                            builder: (BuildContext context, setState) =>
-                                Container(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.8,
-                                  width: MediaQuery.of(context).size.width,
-                                  decoration: new BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: new BorderRadius.only(
-                                      topLeft: const Radius.circular(25.0),
-                                      topRight: const Radius.circular(25.0),
-                                    ),
-                                  ),
-                                  child: ListView(
-                                    children: [
-                                      Container(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.25,
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              alignment: Alignment.center,
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  2,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.3,
-                                              child: Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width /
-                                                    3,
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .width /
-                                                    3,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                    image:DecorationImage(image: AssetImage('assets/material/${specie.name_ch}.jpg',),fit: BoxFit.cover)),
-                                              ),
-                                            ),
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width /
-                                                  2,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.3,
-                                              child: Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(specie.name_ch,style: TextStyle(fontSize: 24),),
-                                                  Divider(),
-                                                  Text("123"),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Divider(
-                                        height: 20,
-                                        thickness: 5,
-                                        indent: 20,
-                                        endIndent: 20,),
-                                      Container(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          height: 70,
-                                          child: Row(
-                                            children: [
-                                              TextButton(
-                                                child: Text(
-                                                  "詳細資料",
-                                                  style: TextStyle(
-                                                      color: Colors.red,
-                                                      fontSize: 20,
-                                                      decoration: TextDecoration
-                                                          .underline,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    nowshow = 0;
-                                                  });
-                                                },
-                                              ),
-                                              VerticalDivider(),
-                                              TextButton(
-                                                child: Text(
-                                                  "天氣",
-                                                  style:
-                                                      TextStyle(fontSize: 20),
-                                                ),
-                                                onPressed: () {
-                                                  setState(() {
-                                                    nowshow = 1;
-                                                  });
-                                                },
-                                              ),
-                                            ],
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                          )),
-                                      IndexedStack(index: nowshow, children: [
-                                        Container(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          child: Column(children: [ Detail(
-                                            name: specie.name_ch,
-                                          ),
-                                            Divider(),
-                                            SpeciesPhoto(
-                                              name: specie.name_ch,
-                                            )],),
-                                        ),
-                                        Container(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          child: Column(
-                                            children: [
-                                              UVBar(uv_value: 5),
-                                              AQIBar(aqi_value: 5),
-                                              SizedBox(height: 20)
-                                            ],
-                                          ),
-                                        )
-                                      ])
-                                    ],
-                                  ),
-                                ));
+                        return MarkerBeTap(name_ch: specie.name_ch,location: specie.Location);
                       });
                 },
               );

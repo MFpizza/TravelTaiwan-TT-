@@ -4,10 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:mori_breath/searchAndTag/search.dart';
 import 'activity/activity.dart';
+import 'core/detail.dart';
 import 'searchAndTag/tag.dart';
 import 'package:animations/animations.dart';
 import 'page/firstPage.dart';
-import 'member/member.dart';import 'illustrate/illustrate.dart';
+import 'member/member.dart';
+import 'illustrate/illustrate.dart';
+import 'package:geolocator/geolocator.dart';
 //TODO 搜尋葉面 tag葉面 搜尋清單layout 地圖中間顯示地區
 
 class HomePage extends StatefulWidget {
@@ -25,8 +28,25 @@ class _HomePageState extends State<HomePage>
 
   static final CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(23.796298894661422, 121.01559192402948),
-    zoom:7.9746,
+    zoom: 7.9746,
   );
+
+  Position currentPosition;
+
+  var geolocator = Geolocator();
+
+  void locatePosition() async {
+    currentPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    LatLng latlngPosition =
+        LatLng(currentPosition.latitude, currentPosition.longitude);
+
+    CameraPosition cameraPosition = CameraPosition(target: latlngPosition,zoom:  7.9746);
+
+    _mapController
+        .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+  }
 
   int _selectedIndex = 0;
 
@@ -60,6 +80,9 @@ class _HomePageState extends State<HomePage>
       _selectedIndex = index;
     });
   }
+
+  bool drag = true;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,18 +123,18 @@ class _HomePageState extends State<HomePage>
       ),
     );
   }
-  List<Widget> buildList(BuildContext context) {return <Widget>[
-    FirstPage(),
-    Illustrate(),
-    mapPage(context),
-    MemberPage(),
-    Activity(),
-  ];}
 
-
+  List<Widget> buildList(BuildContext context) {
+    return <Widget>[
+      FirstPage(),
+      Illustrate(),
+      mapPage(context),
+      MemberPage(),
+      Activity(),
+    ];
+  }
 
   Widget mapPage(BuildContext context) {
-
     BuildContext mapContext = context;
 
     return Container(
@@ -121,7 +144,7 @@ class _HomePageState extends State<HomePage>
         mapType: MapType.normal,
         compassEnabled: false,
         zoomControlsEnabled: true,
-        myLocationEnabled: false,
+        myLocationEnabled: true,
         myLocationButtonEnabled: true,
         mapToolbarEnabled: false,
         initialCameraPosition: _kGooglePlex,
@@ -165,7 +188,12 @@ class _HomePageState extends State<HomePage>
                   transitionDuration: const Duration(seconds: 1),
                   transitionType: ContainerTransitionType.fadeThrough,
                   openBuilder: (context, action) {
-                    return SearchPage(tag: tag, getMarkers: getMarkers, setMarkers: setMarkers, mapController: _mapController, mapContext: mapContext);
+                    return SearchPage(
+                        tag: tag,
+                        getMarkers: getMarkers,
+                        setMarkers: setMarkers,
+                        mapController: _mapController,
+                        mapContext: mapContext);
                   },
                 )),
             Container(
@@ -192,6 +220,7 @@ class _HomePageState extends State<HomePage>
           ],
         ),
       )),
+      dragBottom()
     ]));
   }
 
@@ -199,7 +228,63 @@ class _HomePageState extends State<HomePage>
     setState(() {
       _mapController = controller;
     });
+    locatePosition();
   }
 
+  Widget dragBottom() {
+    // print(getMarkers());
+    List<Marker> lis = _markers.values.toList();
+    return DraggableScrollableSheet(
+      initialChildSize: 0.1,
+      minChildSize: 0.05,
+      maxChildSize: 0.5,
+      builder: (BuildContext context, ScrollController scrollController) {
+        if (_markers.length == 0) {
+          return Container(
+            padding: EdgeInsets.all(50),
+            child: Text('no result'),
+          );
+        }
+        return Container(
+          decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(40.0))),
+          child: ListView.builder(
+            controller: scrollController,
+            itemCount: _markers.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                  padding: EdgeInsets.all(5),
+                  child: ListTile(
+                      leading: Image(
+                          image: AssetImage(
+                              'assets/material/${lis.elementAt(index).infoWindow.title}.jpg')),
+                      title: Text('${lis.elementAt(index).infoWindow.title}'),
+                      subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children:[
+                        Text(lis.elementAt(index).infoWindow.snippet),
+                        Text('距離: ${(Geolocator.distanceBetween(currentPosition.latitude, currentPosition.longitude, lis.elementAt(index).position.latitude, lis.elementAt(index).position.longitude).toInt().toDouble()/1000)} km')]),
+                    onTap: (){
+                       LatLng objectPosition=lis.elementAt(index).position;
 
+                       CameraPosition cameraPosition = CameraPosition(target: objectPosition,zoom:14);
+
+                       _mapController
+                           .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+                       _mapController.showMarkerInfoWindow(lis.elementAt(index).markerId);
+                       showModalBottomSheet(
+                           isScrollControlled: true,
+                           context: context,
+                           builder: (context) {
+                             return MarkerBeTap(name_ch: lis.elementAt(index).infoWindow.title,location: lis.elementAt(index).infoWindow.snippet,);
+                           });
+                    },
+                  ));
+            },
+          ),
+        );
+      },
+    );
+  }
 }
