@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:mori_breath/illustrate/illustrate.dart';
@@ -21,10 +23,14 @@ class _MemberPage extends State<MemberPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    super.initState();
     initialFirebase();
+    super.initState();
   }
+
+  final keyss = GlobalKey();
+
+  User user;
+  int nowShow = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -34,178 +40,332 @@ class _MemberPage extends State<MemberPage> {
         lis.insert(0, key);
       }
     });
-
     return Scaffold(
         body: SingleChildScrollView(
       child: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
         color: Colors.white,
         child: Column(
           children: [
             Member(),
-            Container(
-                padding: EdgeInsets.all(10),
-                color: Colors.white,
-                height: 70,
-                child: Row(
-                  children: [
-                    TextButton(
-                      child: Text(
-                        "收藏",
-                        style: TextStyle(
-                            color: Colors.red,
-                            fontSize: 20,
-                            decoration: TextDecoration.underline,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      onPressed: () {
-                        print("收藏");
-                      },
-                    ),
-                    Text(
-                      "成就",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ],
-                  mainAxisAlignment: MainAxisAlignment.center,
-                )),
-            // Container(
-            //   width: 100,
-            //   height: 50,
-            //   decoration: BoxDecoration(
-            //       borderRadius: BorderRadius.circular(30),
-            //       color: Colors.black54),
-            //   child: TextButton(
-            //     child: Text(
-            //       "全部",
-            //       style: TextStyle(color: Colors.white, fontSize: 20),
-            //     ),
-            //     onPressed: () => showDialog(
-            //       context: context,
-            //       builder: (BuildContext context) {
-            //         return AlertDialog(
-            //           //title: Text('AlertDialog Title'),
-            //           content: SingleChildScrollView(
-            //             child: ListBody(
-            //               children: <Widget>[
-            //                 TextButton(
-            //                   child: Center(child: Text("花")),
-            //                 ),
-            //                 TextButton(
-            //                   child: Center(child: Text("鳥")),
-            //                 ),
-            //               ],
-            //             ),
-            //           ),
-            //           // actions: <Widget>[
-            //           //    TextButton(
-            //           //      child: Text('Approve'),
-            //           //      onPressed: () {
-            //           //        Navigator.of(context).pop();
-            //           //      },
-            //           //    ),
-            //           //  ],
-            //         );
-            //       },
-            //     ),
-            //   ),
-            // ),
-            Expanded(
-              child:
-                  //TODO 可以添加 listView Bar
-                  Container(
-                      color: Colors.white,
-                      child: GridView.builder(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2),
-                          itemCount: lis.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Container(
-                              width: 170,
-                              height: 170,
-                              child: Column(
-                                children: [
-                                  Stack(children: [
-                                    Container(
-                                      width: 130,
-                                      height: 130,
-                                      decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                              image: AssetImage(
-                                                  'assets/material/${lis.elementAt(index)}.jpg'),
-                                              fit: BoxFit.cover)),
-                                    ),
-                                    Container(
-                                      padding: EdgeInsets.all(5),
-                                      width: 130,
-                                      height: 130,
-                                      alignment: Alignment.bottomRight,
-                                      child: Container(
-                                        //  color: Colors.orangeAccent,
-                                        width: 40,
-                                        height: 40,
-                                        child: Stack(
-                                          alignment: Alignment.center,
-                                          children: [
-                                            FaIcon(
-                                              FontAwesomeIcons.solidHeart,
-                                              color: Colors.white,
-                                            ),
-                                            myMap[lis.elementAt(index)]
-                                                ? IconButton(
-                                                    icon: FaIcon(
-                                                      FontAwesomeIcons
-                                                          .solidHeart,
-                                                      color: Colors.red,
-                                                      size: IconThemeData
-                                                                  .fallback()
-                                                              .size -
-                                                          5,
-                                                    ),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        myMap[lis.elementAt(
-                                                                index)] =
-                                                            !myMap[
-                                                                lis.elementAt(
-                                                                    index)];
-                                                      });
-                                                    },
-                                                  )
-                                                : IconButton(
-                                                    icon: FaIcon(
-                                                      FontAwesomeIcons
-                                                          .solidHeart,
-                                                      color: Colors.grey,
-                                                      size: IconThemeData
-                                                                  .fallback()
-                                                              .size -
-                                                          5,
-                                                    ),
-                                                    onPressed: () {
-                                                      setState(() {
-                                                        myMap[lis.elementAt(
-                                                                index)] =
-                                                            !myMap[
-                                                                lis.elementAt(
-                                                                    index)];
-                                                      });
-                                                    },
-                                                  )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ]),
-                                  Divider(),
-                                  Text(lis.elementAt(index))
-                                ],
+            StatefulBuilder(
+                key: keyss,
+                builder: (context, chang) {
+                  return Column(
+                    children: [
+                      Container(
+                          padding: EdgeInsets.all(10),
+                          color: Colors.white,
+                          height: 70,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              TextButton(
+                                child: Text(
+                                  "收藏",
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 20,
+                                      decoration: TextDecoration.underline,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                onPressed: () {
+                                  chang(() {
+                                    nowShow = 0;
+                                  });
+                                },
                               ),
-                            );
-                          })),
-            )
+                              TextButton(
+                                child: Text(
+                                  "成就",
+                                  style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 20,
+                                      decoration: TextDecoration.underline,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                onPressed: () {
+                                  chang(() {
+                                    nowShow = 1;
+                                  });
+                                },
+                              ),
+                            ],
+                            mainAxisAlignment: MainAxisAlignment.center,
+                          )),
+                      // Container(
+                      //   width: 100,
+                      //   height: 50,
+                      //   decoration: BoxDecoration(
+                      //       borderRadius: BorderRadius.circular(30),
+                      //       color: Colors.black54),
+                      //   child: TextButton(
+                      //     child: Text(
+                      //       "全部",
+                      //       style: TextStyle(color: Colors.white, fontSize: 20),
+                      //     ),
+                      //     onPressed: () => showDialog(
+                      //       context: context,
+                      //       builder: (BuildContext context) {
+                      //         return AlertDialog(
+                      //           //title: Text('AlertDialog Title'),
+                      //           content: SingleChildScrollView(
+                      //             child: ListBody(
+                      //               children: <Widget>[
+                      //                 TextButton(
+                      //                   child: Center(child: Text("花")),
+                      //                 ),
+                      //                 TextButton(
+                      //                   child: Center(child: Text("鳥")),
+                      //                 ),
+                      //               ],
+                      //             ),
+                      //           ),
+                      //           // actions: <Widget>[
+                      //           //    TextButton(
+                      //           //      child: Text('Approve'),
+                      //           //      onPressed: () {
+                      //           //        Navigator.of(context).pop();
+                      //           //      },
+                      //           //    ),
+                      //           //  ],
+                      //         );
+                      //       },
+                      //     ),
+                      //   ),
+                      // ),
+                      Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: 400,
+                          child: IndexedStack(index: nowShow, children: [
+                            (user!=null)?GridView.builder(
+                                // scrollDirection: Axis.horizontal,
+                                // shrinkWrap: true,
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 2),
+                                itemCount: lis.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return Container(
+                                    width: 170,
+                                    height: 170,
+                                    child: Column(
+                                      children: [
+                                        Stack(children: [
+                                          Container(
+                                            width: 130,
+                                            height: 130,
+                                            decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                    image: AssetImage(
+                                                        'assets/material/${lis.elementAt(index)}.jpg'),
+                                                    fit: BoxFit.cover)),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.all(5),
+                                            width: 130,
+                                            height: 130,
+                                            alignment: Alignment.bottomRight,
+                                            child: Container(
+                                              //  color: Colors.orangeAccent,
+                                              width: 40,
+                                              height: 40,
+                                              child: Stack(
+                                                alignment: Alignment.center,
+                                                children: [
+                                                  FaIcon(
+                                                    FontAwesomeIcons.solidHeart,
+                                                    color: Colors.white,
+                                                  ),
+                                                  myMap[lis.elementAt(index)]
+                                                      ? IconButton(
+                                                          icon: FaIcon(
+                                                            FontAwesomeIcons
+                                                                .solidHeart,
+                                                            color: Colors.red,
+                                                            size: IconThemeData
+                                                                        .fallback()
+                                                                    .size -
+                                                                5,
+                                                          ),
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              myMap[lis.elementAt(
+                                                                      index)] =
+                                                                  !myMap[lis
+                                                                      .elementAt(
+                                                                          index)];
+                                                            });
+                                                          },
+                                                        )
+                                                      : IconButton(
+                                                          icon: FaIcon(
+                                                            FontAwesomeIcons
+                                                                .solidHeart,
+                                                            color: Colors.grey,
+                                                            size: IconThemeData
+                                                                        .fallback()
+                                                                    .size -
+                                                                5,
+                                                          ),
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              myMap[lis.elementAt(
+                                                                      index)] =
+                                                                  !myMap[lis
+                                                                      .elementAt(
+                                                                          index)];
+                                                            });
+                                                          },
+                                                        )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ]),
+                                        Divider(),
+                                        Text(lis.elementAt(index))
+                                      ],
+                                    ),
+                                  );
+                                }): Container(
+                              child: Center(
+                                child: Text('尚未登入'),
+                              ),
+                            ),
+                            (user != null)
+                                ? FutureBuilder(
+                                    future: FirebaseFirestore.instance
+                                        .collection('users')
+                                        .doc(user.email)
+                                        .get(),
+                                    builder: (context,
+                                        AsyncSnapshot<DocumentSnapshot> snapshot) {
+                                      if (snapshot.hasData) {
+                                        // print(snapshot.data.data());
+                                        int count = snapshot.data.data()['count'];
+                                        return ListView.builder(
+                                            itemCount: 5,
+                                            itemBuilder: (context, int index) {
+                                              // print(index);
+                                              double Denominator =
+                                                  ((count / (index + 1) / 10)
+                                                      .toDouble());
+                                              double widtha =
+                                                  ((MediaQuery.of(context).size.width -
+                                                          180) *
+                                                      Denominator);
+                                              return Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 20, horizontal: 10),
+                                                  height: 200,
+                                                  width:
+                                                      MediaQuery.of(context).size.width,
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                        color: Colors.pinkAccent[100],
+                                                        borderRadius:
+                                                            BorderRadius.circular(30)),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.center,
+                                                      children: [
+                                                        Container(
+                                                            width: 100,
+                                                            height: 100,
+                                                            decoration: BoxDecoration(
+                                                              image: DecorationImage(
+                                                                  image: AssetImage(
+                                                                      'assets/a.png'),
+                                                                  fit: BoxFit.cover),
+                                                            )),
+                                                        Container(
+                                                          padding:
+                                                              EdgeInsets.only(left: 20),
+                                                          width: MediaQuery.of(context)
+                                                                  .size
+                                                                  .width -
+                                                              160,
+                                                          // color:Colors.red,
+                                                          child: Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            children: [
+                                                              Text(
+                                                                '前往賞花${(index + 1) * 10}次',
+                                                                style: TextStyle(
+                                                                    fontSize: 20,
+                                                                    color:
+                                                                        Colors.white),
+                                                              ),
+                                                              Container(
+                                                                height: 5,
+                                                              ),
+                                                              Container(
+                                                                alignment: Alignment
+                                                                    .centerLeft,
+                                                                padding:
+                                                                    EdgeInsets.all(5),
+                                                                height: 30,
+                                                                width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width -
+                                                                    180,
+                                                                decoration: BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                30),
+                                                                    color:
+                                                                        Colors.white),
+                                                                child: Container(
+                                                                  height: 30,
+                                                                  width: widtha,
+                                                                  decoration:
+                                                                      BoxDecoration(
+                                                                    borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(
+                                                                                30),
+                                                                    color: Colors
+                                                                            .pinkAccent[
+                                                                        200],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                height: 5,
+                                                              ),
+                                                              Center(
+                                                                  child: Text(
+                                                                "$count/${(index + 1) * 10}",
+                                                                style: TextStyle(
+                                                                    color:
+                                                                        Colors.white),
+                                                              ))
+                                                            ],
+                                                          ),
+                                                        )
+                                                      ],
+                                                    ),
+                                                  ));
+                                            });
+                                      }
+                                      return CircularProgressIndicator();
+                                    })
+                                : Container(
+                                    child: Center(
+                                      child: Text('尚未登入'),
+                                    ),
+                                  ),
+                          ]))
+                    ],
+                  );
+                })
           ],
         ),
       ),
@@ -219,13 +379,38 @@ class _MemberPage extends State<MemberPage> {
       if (_user == null) {
         print('User is currently signed out!');
         setState(() {
+          user = null;
           notLogin = true;
         });
       } else {
         print('User is sign in!');
         setState(() {
+          user = _user;
           notLogin = false;
         });
+        DocumentSnapshot snapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(_user.email)
+            .get();
+        if (snapshot.data() == null) {
+          setState(() {
+            user = (_user);
+            notLogin = false;
+          });
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(_user.email)
+              .set({"favorite": myMap, "count": 0});
+        } else if (snapshot.data()['favorite'].length < species.length) {
+          //TODO 如果新增illustrate的東西要同步上去firebase
+        } else {
+          setState(() {
+            user = (_user);
+            notLogin = false;
+            myMap = snapshot.data()['favorite'];
+            keyss.currentState.setState(() {});
+          });
+        }
       }
     });
   }
@@ -244,8 +429,6 @@ Map<String, dynamic> myMap = {
 };
 
 class Member extends StatefulWidget {
-  Member();
-
   _Member createState() => _Member();
 }
 
@@ -277,14 +460,24 @@ class _Member extends State<Member> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             VerticalDivider(),
-                            Container(
-                              width: 120,
-                              height: 120,
-                              decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                      image: NetworkImage(user.photoURL)),
-                                  shape: BoxShape.circle),
-                            ),
+                            user.photoURL != null
+                                ? Container(
+                                    width: 120,
+                                    height: 120,
+                                    decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                            image: NetworkImage(user.photoURL)),
+                                        shape: BoxShape.circle),
+                                  )
+                                : Container(
+                                    width: 120,
+                                    height: 120,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    child: Icon(Icons.person),
+                                  ),
                             VerticalDivider(),
                             Expanded(
                                 child: Column(
@@ -376,28 +569,6 @@ class _Member extends State<Member> {
           user = (_user);
           notLogin = false;
         });
-      /*  DocumentSnapshot snapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(_user.email)
-            .get();
-        if (snapshot.data() == null) {
-          setState(() {
-            user = (_user);
-            notLogin = false;
-          });
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(_user.email)
-              .set(myMap);
-        } else if (snapshot.data().length < species.length) {
-          //TODO 如果新增illustrate的東西要同步上去firebase
-        } else {
-          setState(() {
-            user = (_user);
-            notLogin = false;
-            myMap = snapshot.data();
-          });
-        }*/
       }
     });
   }

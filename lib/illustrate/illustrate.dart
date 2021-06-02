@@ -7,21 +7,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mori_breath/core/detail.dart';
 import 'package:mori_breath/member/member.dart';
 
-List<String> species = [
-  '燈稱花',
-  '樹杞',
-  '斑花青牛膽',
-  '一枝黃花',
-  '七葉一枝花',
-  '大枝掛繡球',
-  '大香葉樹',
-  '杜虹花',
-  '咖啡樹',
-  '昆欄樹',
-  '梅花草',
-  '臺灣百合'
-];
-
 class Illustrate extends StatefulWidget {
   _Illustrate createState() => _Illustrate();
 }
@@ -98,7 +83,8 @@ class _Illustrate extends State<Illustrate> {
     }
     return Scaffold(
         appBar: AppBar(
-          title: Text("圖鑑"),
+          backgroundColor: Colors.green,
+          title: Center(child:Text("圖鑑")),
         ),
         body: Padding(
             padding: EdgeInsets.only(top: 20),
@@ -189,7 +175,7 @@ class _Illustrate extends State<Illustrate> {
                                 FirebaseFirestore.instance
                                     .collection('users')
                                     .doc(user.email)
-                                    .update({a: myMap[a]});
+                                    .update({"favorite":myMap});
                                 changeState();
                               }
                             },
@@ -231,7 +217,7 @@ class _Illustrate extends State<Illustrate> {
                                 FirebaseFirestore.instance
                                     .collection('users')
                                     .doc(user.email)
-                                    .update({a: myMap[a]});
+                                    .update({"favorite":myMap});
                                 changeState();
                               }
                             },
@@ -269,3 +255,51 @@ class _Illustrate extends State<Illustrate> {
     });
   }
 }
+
+List<String> species = [
+  "一枝黃花",
+"七葉一枝花",
+"咖啡樹",
+"大枝掛繡球",
+"大香葉樹",
+"斑花青牛膽",
+"昆欄樹",
+"杜虹花",
+"梅花草",
+"樹杞",
+"燈稱花",
+"狹瓣八仙花",
+"玉山櫻草",
+"白花八角",
+"筆筒樹",
+"臺灣寶鐸花",
+"臺灣樹參",
+"臺灣澤蘭",
+"西施花",
+"通條樹",
+"雙花龍葵",
+"高山白珠樹",
+"黃花鼠尾草",
+"黃花龍膽",
+"三角葉西番蓮",
+"二裂唇莪白蘭",
+"伏牛花",
+"倒吊蓮",
+"假繡球",
+"克蘭樹",
+"刀葉樹平蘚",
+"匍枝銀蓮花(三花銀蓮花)",
+"半邊蓮",
+"厚殼樹",
+"單花牻牛兒苗",
+"墨水樹",
+"墨點櫻桃",
+"多花山螞蝗",
+"多花野碗豆",
+"大花咸豐草",
+"大花細辛",
+"大錦蘭",
+"大香葉樹(大葉釣樟)",
+"宜蘭菝葜",
+"小桑樹",
+];

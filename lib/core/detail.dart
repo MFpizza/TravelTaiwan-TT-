@@ -244,10 +244,9 @@ class _SpeciesPhoto extends State<SpeciesPhoto> {
           child: Text("尚未有圖片上傳"),
         ),
       ));
-    }
-    else {
+    } else {
       List<Widget> forRow = <Widget>[];
-      for (int index=0; index < urls.length; index++) {
+      for (int index = 0; index < urls.length; index++) {
         forRow.add(Container(
           width: MediaQuery.of(context).size.width / 3,
           height: MediaQuery.of(context).size.width / 3,
@@ -256,7 +255,7 @@ class _SpeciesPhoto extends State<SpeciesPhoto> {
                   image: NetworkImage(urls.elementAt(index).toString()),
                   fit: BoxFit.cover)),
         ));
-        if ((index % 3 == 2 ) || (index == (urls.length - 1))) {
+        if ((index % 3 == 2) || (index == (urls.length - 1))) {
           // List<Widget> forRow2 = List.from()
           lis.add(Row(
             children: List.from(forRow),
@@ -265,7 +264,7 @@ class _SpeciesPhoto extends State<SpeciesPhoto> {
         }
       }
     }
-   return Column(children: lis);
+    return Column(children: lis);
   }
 
   @override
@@ -313,136 +312,322 @@ class _SpeciesPhoto extends State<SpeciesPhoto> {
   }
 }
 
-class MarkerBeTap extends StatefulWidget{
+class MarkerBeTap extends StatefulWidget {
   final String name_ch;
   final String location;
-  MarkerBeTap({this.name_ch,this.location});
 
-  _MarkerBeTap createState()=>_MarkerBeTap(name_ch: name_ch,Location: location);
+  MarkerBeTap({this.name_ch, this.location});
+
+  _MarkerBeTap createState() =>
+      _MarkerBeTap(name_ch: name_ch, Location: location);
 }
 
-class _MarkerBeTap extends State{
+class _MarkerBeTap extends State {
   //final Species specie;
-  _MarkerBeTap({this.name_ch,this.Location});
+  _MarkerBeTap({this.name_ch, this.Location});
+
   final String name_ch;
   final String Location;
-  int nowshow=0;
-  List weather=null;
+  int nowshow = 0;
+  List weather = null;
+
+  final GlobalKey keyss= GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Container(
-              height:
-              MediaQuery.of(context).size.height * 0.8,
-              width: MediaQuery.of(context).size.width,
-              decoration: new BoxDecoration(
-                color: Colors.white,
-                borderRadius: new BorderRadius.only(
-                  topLeft: const Radius.circular(25.0),
-                  topRight: const Radius.circular(25.0),
-                ),
+    return FutureBuilder(
+      future: getWeather(Location),
+      builder: (context, AsyncSnapshot<List> snapshot) {
+        if (snapshot.hasData) {
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.8,
+            width: MediaQuery.of(context).size.width,
+            decoration: new BoxDecoration(
+              color: Colors.white,
+              borderRadius: new BorderRadius.only(
+                topLeft: const Radius.circular(25.0),
+                topRight: const Radius.circular(25.0),
               ),
-              child: ListView(
-                children: [
-                  Container(
-                    height:
-                    MediaQuery.of(context).size.height *
-                        0.25,
-                    width:
-                    MediaQuery.of(context).size.width,
-                    child: Row(
-                      children: [
-                        Container(
-                          alignment: Alignment.center,
-                          width: MediaQuery.of(context)
-                              .size
-                              .width /
-                              2,
-                          height: MediaQuery.of(context)
-                              .size
-                              .height *
-                              0.3,
-                          child: Container(
-                            width: MediaQuery.of(context)
-                                .size
-                                .width /
-                                3,
-                            height: MediaQuery.of(context)
-                                .size
-                                .width /
-                                3,
-                            decoration: BoxDecoration(
-                                borderRadius:
-                                BorderRadius.circular(
-                                    20),
-                                image:DecorationImage(image: AssetImage('assets/material/${name_ch}.jpg',),fit: BoxFit.cover)),
-                          ),
+            ),
+            child: ListView(
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.25,
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        width: MediaQuery.of(context).size.width / 2,
+                        height: MediaQuery.of(context).size.height * 0.3,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width / 3,
+                          height: MediaQuery.of(context).size.width / 3,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              image: DecorationImage(
+                                  image: AssetImage(
+                                    'assets/material/${name_ch}.jpg',
+                                  ),
+                                  fit: BoxFit.cover)),
                         ),
-                        Container(
-                          width: MediaQuery.of(context)
-                              .size
-                              .width /
-                              2,
-                          height: MediaQuery.of(context)
-                              .size
-                              .height *
-                              0.3,
-                          child: Column(
-                            mainAxisAlignment:
-                            MainAxisAlignment.center,
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start,
-                            children: [
-                              Text(name_ch,style: TextStyle(fontSize: 24),),
-                              Text(Location,style: TextStyle(fontSize: 18,color: Colors.grey),),
-                              Divider(),
-                              Stack(children: [
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width / 2,
+                        height: MediaQuery.of(context).size.height * 0.3,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              name_ch,
+                              style: TextStyle(fontSize: 24),
+                            ),
+                            Text(
+                              Location,
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.grey),
+                            ),
+                            Divider(),
+                            Stack(
+                              children: [
                                 Container(
                                   padding: EdgeInsets.only(right: 10),
-                                  alignment:Alignment.centerRight,
-                                  width: MediaQuery.of(context)
-                                  .size
-                                  .width /
-                                  2,child: ElevatedButton(onPressed: ()=>print("前往"), child: Text("前往")),),
-                               FutureBuilder(
-                                 future: getWeather(Location),
-                                 builder: (context,AsyncSnapshot<List>snapshot){
+                                  alignment: Alignment.centerRight,
+                                  width: MediaQuery.of(context).size.width / 2,
+                                  child: ElevatedButton(
+                                      onPressed: () => print("前往"),
+                                      child: Text("前往")),
+                                ),
+                                Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 2,
+                                    height: 40,
+                                    alignment: Alignment.centerLeft,
+                                    child: Row(children: [
+                                      Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            border: Border.all(
+                                                color: Colors.green, width: 3)),
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                6,
+                                        height: 40,
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          "${snapshot.data.elementAt(0)['temp']} °C",
+                                          style: TextStyle(
+                                              color: Colors.green,
+                                              fontSize: 20),
+                                        ),
+                                      ),
+                                      (int.parse(snapshot.data
+                                                  .elementAt(0)['radius_idx']) >
+                                              5)
+                                          ? InkWell(
+                                              child: Container(
+                                                height: 40,
+                                                width: 40,
+                                                decoration: BoxDecoration(
+                                                    image: DecorationImage(
+                                                        image: AssetImage(
+                                                            'assets/warning.png'),
+                                                        fit: BoxFit.cover)),
+                                              ),
+                                              onTap: () => showDialog(
+                                                  context: context,
+                                                  builder: (context) {
+                                                    return AlertDialog(
+                                                      //title: Text('AlertDialog Title'),
+                                                      content:
+                                                          Container(
+                                                              height: 250,
+                                                              child:
+                                                        Column(children: [
+                                                          Container(width: 100,height: 100, decoration: BoxDecoration(
+                                                              image: DecorationImage(
+                                                                  image: AssetImage(
+                                                                      'assets/warning.png'),
+                                                                  fit: BoxFit.cover))
+                                                          ),
+                                                          Text('紫外線指數過高',style: TextStyle(fontSize: 24,color: Colors.red),),
+                                                          Text('建議外出前請確實做好'
+                                                              '防曬工作',style: TextStyle(fontSize: 16,color: Colors.grey),)
+                                                          ,Container(height: 10,),
+                                                        ElevatedButton(onPressed: (){
+                                                    keyss.currentState.setState(() {
+                                                    nowshow=1;
+                                                    });
+                                                    Navigator.of(context).pop();
+                                                    }, child: Text("點我看更多天氣資訊"))
+                                                        ],))
 
-                                   if(snapshot.hasData){
-                                     weather=snapshot.data;
-
-
-                                     return  Container(
-                                       padding: EdgeInsets.only(right: 10),
-                                       alignment:Alignment.centerLeft,
-                                     color: Colors.red,);
-                                   }
-
-                                 return  Container(
-                                   padding: EdgeInsets.only(right: 10),
-                                   alignment:Alignment.centerLeft,
-                                   height: 50,
-                                   width: MediaQuery.of(context)
-                                       .size
-                                       .width /
-                                       2,);
-                               })
-                              ],)
-                            ],
-                          ),
+                                                    );
+                                                  }),
+                                            )
+                                          : Container()
+                                    ]))
+                              ],
+                            )
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                  Divider(
-                    height: 20,
-                    thickness: 5,
-                    indent: 20,
-                    endIndent: 20,),
+                ),
+                Divider(
+                  height: 20,
+                  thickness: 5,
+                  indent: 20,
+                  endIndent: 20,
+                ),
+                StatefulBuilder(
+                    key: keyss,
+                    builder: (context, StateSetter set) {
+                  return Column(children: [
+                    Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 70,
+                        child: Row(
+                          children: [
+                            TextButton(
+                              child: Text(
+                                "詳細資料",
+                                style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 20,
+                                    decoration: TextDecoration.underline,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              onPressed: () {
+                                set(() {
+                                  nowshow = 0;
+                                });
+                              },
+                            ),
+                            VerticalDivider(),
+                            TextButton(
+                              child: Text(
+                                "天氣",
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              onPressed: () {
+                                set(() {
+                                  nowshow = 1;
+                                });
+                              },
+                            ),
+                          ],
+                          mainAxisAlignment: MainAxisAlignment.center,
+                        )),
+                    IndexedStack(index: nowshow, children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          children: [
+                            Detail(
+                              name: name_ch,
+                            ),
+                            Divider(),
+                            SpeciesPhoto(
+                              name: name_ch,
+                            )
+                          ],
+                        ),
+                      ),
+                      Container(
+                        child: Weather(lis: snapshot.data),
+                      )
+                    ])
+                  ]);
+                })
+              ],
+            ),
+          );
+        }
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.8,
+          width: MediaQuery.of(context).size.width,
+          decoration: new BoxDecoration(
+            color: Colors.white,
+            borderRadius: new BorderRadius.only(
+              topLeft: const Radius.circular(25.0),
+              topRight: const Radius.circular(25.0),
+            ),
+          ),
+          child: ListView(
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * 0.25,
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  children: [
+                    Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width / 2,
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 3,
+                        height: MediaQuery.of(context).size.width / 3,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            image: DecorationImage(
+                                image: AssetImage(
+                                  'assets/material/${name_ch}.jpg',
+                                ),
+                                fit: BoxFit.cover)),
+                      ),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width / 2,
+                      height: MediaQuery.of(context).size.height * 0.3,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name_ch,
+                            style: TextStyle(fontSize: 24),
+                          ),
+                          Text(
+                            Location,
+                            style: TextStyle(fontSize: 18, color: Colors.grey),
+                          ),
+                          Divider(),
+                          Stack(
+                            children: [
+                              Container(
+                                padding: EdgeInsets.only(right: 10),
+                                alignment: Alignment.centerRight,
+                                width: MediaQuery.of(context).size.width / 2,
+                                child: ElevatedButton(
+                                    onPressed: () => print("前往"),
+                                    child: Text("前往")),
+                              ),
+                              Container(
+                                child: CircularProgressIndicator(),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Divider(
+                height: 20,
+                thickness: 5,
+                indent: 20,
+                endIndent: 20,
+              ),
+              StatefulBuilder(builder: (context, StateSetter set) {
+                return Column(children: [
                   Container(
-                      width:
-                      MediaQuery.of(context).size.width,
+                      width: MediaQuery.of(context).size.width,
                       height: 70,
                       child: Row(
                         children: [
@@ -452,13 +637,11 @@ class _MarkerBeTap extends State{
                               style: TextStyle(
                                   color: Colors.red,
                                   fontSize: 20,
-                                  decoration: TextDecoration
-                                      .underline,
-                                  fontWeight:
-                                  FontWeight.bold),
+                                  decoration: TextDecoration.underline,
+                                  fontWeight: FontWeight.bold),
                             ),
                             onPressed: () {
-                              setState(() {
+                              set(() {
                                 nowshow = 0;
                               });
                             },
@@ -467,40 +650,43 @@ class _MarkerBeTap extends State{
                           TextButton(
                             child: Text(
                               "天氣",
-                              style:
-                              TextStyle(fontSize: 20),
+                              style: TextStyle(fontSize: 20),
                             ),
                             onPressed: () {
-                              setState(() {
+                              set(() {
                                 nowshow = 1;
                               });
                             },
                           ),
                         ],
-                        mainAxisAlignment:
-                        MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
                       )),
                   IndexedStack(index: nowshow, children: [
                     Container(
-                      width:
-                      MediaQuery.of(context).size.width,
-                      child: Column(children: [ Detail(
-                        name: name_ch,
+                      width: MediaQuery.of(context).size.width,
+                      child: Column(
+                        children: [
+                          Detail(
+                            name: name_ch,
+                          ),
+                          Divider(),
+                          SpeciesPhoto(
+                            name: name_ch,
+                          )
+                        ],
                       ),
-                        Divider(),
-                        SpeciesPhoto(
-                          name: name_ch,
-                        )],),
                     ),
                     Container(
-                      width:
-                      MediaQuery.of(context).size.width,
-                      child: Weather(lis:weather),
+                      child: CircularProgressIndicator(),
                     )
                   ])
-                ],
-              ),
-            );
+                ]);
+              })
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Future<List> getWeather(String location) async {

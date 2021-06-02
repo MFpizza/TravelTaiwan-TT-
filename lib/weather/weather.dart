@@ -25,9 +25,9 @@ class Weather extends StatelessWidget {
                 return Container(
                   child: Column(
                     children: [
-                      Container(width: MediaQuery.of(context).size.width * 0.2,height: MediaQuery.of(context).size.width * 0.2,decoration: BoxDecoration(image: DecorationImage(image: AssetImage('assets/sunny.png'),fit: BoxFit.cover)),),
+                      Container(width: MediaQuery.of(context).size.width * 0.35,height: MediaQuery.of(context).size.width * 0.35,decoration: BoxDecoration(image: DecorationImage(image: AssetImage('assets/sunny.png'),fit: BoxFit.cover)),),
                       Text("${lis.elementAt(index)['temp']}°C"),
-                      Text(lis.elementAt(index)['time'])
+                      Text("${lis.elementAt(index)['weekday']} ${lis.elementAt(index)['time']}")
                     ],
                     mainAxisAlignment: MainAxisAlignment.center,
                   ),

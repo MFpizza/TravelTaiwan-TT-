@@ -122,7 +122,7 @@ class _FirstPage extends State<FirstPage> {
                                 FirebaseFirestore.instance
                                     .collection('users')
                                     .doc(user.email)
-                                    .update({a: myMap[a]});
+                                    .update({"favorite": myMap});
                                 changeState();
                               }
                             },
@@ -161,10 +161,11 @@ class _FirstPage extends State<FirstPage> {
                                     });
                               } else {
                                 myMap[a] = !myMap[a];
+
                                 FirebaseFirestore.instance
                                     .collection('users')
                                     .doc(user.email)
-                                    .update({a: myMap[a]});
+                                    .update({"favorite": myMap});
                                 changeState();
                               }
                             },
@@ -183,13 +184,13 @@ class _FirstPage extends State<FirstPage> {
 
   int nowshow = 0;
 
-  List<int> randomNum(int many){
-    int maxNum= species.length;
+  List<int> randomNum(int many) {
+    int maxNum = species.length;
     Random random = Random();
-    List<int> lis=[];
-    for(int i=0;i<many;i++){
-      int rNum= random.nextInt(maxNum);
-      if(lis.contains(rNum)){
+    List<int> lis = [];
+    for (int i = 0; i < many; i++) {
+      int rNum = random.nextInt(maxNum);
+      if (lis.contains(rNum)) {
         i--;
         continue;
       }
@@ -199,67 +200,121 @@ class _FirstPage extends State<FirstPage> {
   }
 
   List<Widget> buildList(BuildContext context) {
-    List<int> lis2=randomNum(6);
+    List<int> lis2 = randomNum(6);
     return <Widget>[
-      ListView(
-        children: [
-          Container(
-            height: 50,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+      FutureBuilder(
+          future: FirebaseFirestore.instance
+              .collection('Species')
+              .orderBy("count", descending: true)
+              .get(),
+          builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+            if (snapshot.hasData) {
+              //print(snapshot.data.docs.elementAt(0).id);
+              return ListView(
+                children: [
+                  Container(
+                    height: 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _selectedIndex = 0;
+                              });
+                            },
+                            child: Text("排行榜")),
+                        Container(
+                          width: MediaQuery.of(context).size.width / 8,
+                        ),
+                        ElevatedButton(
+                            onPressed: () {
+                              setState(() {
+                                _selectedIndex = 1;
+                              });
+                            },
+                            child: Text("推薦"))
+                      ],
+                    ),
+                  ),
+                  Container(
+                      //color: Colors.purpleAccent,
+                      // padding: EdgeInsets.all(5),
+                      alignment: Alignment.center,
+                      height: MediaQuery.of(context).size.width * 0.5,
+                      child: Swiper(
+                        // autoplay: true,
+                        itemCount: 3,
+                        itemBuilder: (BuildContext context, int index) {
+                          return orderContain(
+                              snapshot.data.docs.elementAt(index).id, index);
+                        },
+                        viewportFraction: 0.4,
+                        scale: 0.7,
+                      )),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      createContain(snapshot.data.docs.elementAt(4).id,
+                          changeState, context),
+                      VerticalDivider(),
+                      createContain(snapshot.data.docs.elementAt(5).id,
+                          changeState, context)
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      createContain(snapshot.data.docs.elementAt(6).id,
+                          changeState, context),
+                      VerticalDivider(),
+                      createContain(snapshot.data.docs.elementAt(7).id,
+                          changeState, context)
+                    ],
+                  ),
+                ],
+              );
+            }
+            return ListView(
               children: [
-                ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedIndex = 0;
-                      });
-                    },
-                    child: Text("排行榜")),
                 Container(
-                  width: MediaQuery.of(context).size.width / 8,
+                  height: 50,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _selectedIndex = 0;
+                            });
+                          },
+                          child: Text("排行榜")),
+                      Container(
+                        width: MediaQuery.of(context).size.width / 8,
+                      ),
+                      ElevatedButton(
+                          onPressed: () {
+                            setState(() {
+                              _selectedIndex = 1;
+                            });
+                          },
+                          child: Text("推薦"))
+                    ],
+                  ),
                 ),
-                ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        _selectedIndex = 1;
-                      });
-                    },
-                    child: Text("推薦"))
+                Container(
+                  height: MediaQuery.of(context).size.height - 50,
+                  width: MediaQuery.of(context).size.width,
+                  child: Container(
+                    child: CircularProgressIndicator(),
+                  ),
+                  alignment: Alignment.center,
+                )
               ],
-            ),
-          ),
-          Container(
-              //color: Colors.purpleAccent,
-              // padding: EdgeInsets.all(5),
-              alignment: Alignment.center,
-              height: MediaQuery.of(context).size.width * 0.5,
-              child: Swiper(
-                // autoplay: true,
-                itemCount: 3,
-                itemBuilder: (BuildContext context, int index) {
-                  return orderContain(lis.elementAt(index), index);
-                },
-                viewportFraction: 0.4,
-                scale: 0.7,
-              )),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              createContain('玫瑰', changeState, context),
-              VerticalDivider(),
-              createContain('蓮花', changeState, context)
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              createContain('向日葵', changeState, context),
-              VerticalDivider(),
-              createContain('蘭花', changeState, context)
-            ],
-          ),
-        ],
-      ),
+            );
+          }),
+      //排行榜
+      //推薦
       Column(
         children: [
           Container(
@@ -295,7 +350,8 @@ class _FirstPage extends State<FirstPage> {
                     crossAxisCount: 2),
                 itemCount: lis2.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return createContain(species.elementAt(lis2.elementAt(index)),changeState,context);
+                  return createContain(species.elementAt(lis2.elementAt(index)),
+                      changeState, context);
                 }),
           )
         ],
@@ -312,6 +368,7 @@ class _FirstPage extends State<FirstPage> {
     }
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.green,
         title: Center(
             child: Text(
           "LOGO",
@@ -323,19 +380,27 @@ class _FirstPage extends State<FirstPage> {
   }
 
   Widget orderContain(String a, int index) {
-    return Stack(
-      children: [
-        createContain(a, changeState, context),
-        Container(
-          //color: Colors.orangeAccent,
-          alignment: Alignment.bottomLeft,
-          child: Image(
-            image: AssetImage('assets/${index + 1}-01.png'),
-            width: 90,
-            height: 70,
-          ),
-        ),
-      ],
-    );
+    return Container(
+        width: 200,
+        height: 200,
+        child: Stack(
+          children: [
+            createContain(a, changeState, context),
+            Container(
+              alignment: Alignment(-1.5,-1.2),
+              width: 200,
+              height: 200,
+              child: Container(
+                width: 90,
+                height: 70,
+                //color: Colors.orangeAccent,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                  image: AssetImage('assets/${index + 1}-01.png'),fit: BoxFit.cover
+                )),
+              ),
+            )
+          ],
+        ));
   }
 }
