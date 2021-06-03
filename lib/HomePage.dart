@@ -236,7 +236,7 @@ class _HomePageState extends State<HomePage>
     List<Marker> lis = _markers.values.toList();
     return DraggableScrollableSheet(
       initialChildSize: 0.1,
-      minChildSize: 0.05,
+      minChildSize: 0.07,
       maxChildSize: 0.5,
       builder: (BuildContext context, ScrollController scrollController) {
         if (_markers.length == 0) {
@@ -249,7 +249,11 @@ class _HomePageState extends State<HomePage>
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(40.0))),
-          child: ListView.builder(
+          child: Column(children: [
+            Center(child: Container(height:20,width:10,child:Icon(Icons.menu),)),
+          Expanded(
+               // height: MediaQuery.of(context).size.height*0.8,
+                child:ListView.builder(
             controller: scrollController,
             itemCount: _markers.length,
             itemBuilder: (BuildContext context, int index) {
@@ -282,7 +286,7 @@ class _HomePageState extends State<HomePage>
                     },
                   ));
             },
-          ),
+          ))]),
         );
       },
     );
