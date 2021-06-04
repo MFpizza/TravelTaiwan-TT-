@@ -1,5 +1,6 @@
 import 'dart:convert';
-
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -315,19 +316,21 @@ class _SpeciesPhoto extends State<SpeciesPhoto> {
 class MarkerBeTap extends StatefulWidget {
   final String name_ch;
   final String location;
+  final LatLng position;
 
-  MarkerBeTap({this.name_ch, this.location});
+  MarkerBeTap({this.name_ch, this.location,@required this.position});
 
   _MarkerBeTap createState() =>
-      _MarkerBeTap(name_ch: name_ch, Location: location);
+      _MarkerBeTap(name_ch: name_ch, Location: location,position: position);
 }
 
 class _MarkerBeTap extends State {
   //final Species specie;
-  _MarkerBeTap({this.name_ch, this.Location});
+  _MarkerBeTap({this.name_ch, this.Location,this.position});
 
   final String name_ch;
   final String Location;
+  final LatLng position;
   int nowshow = 0;
   List weather = null;
 
@@ -397,7 +400,22 @@ class _MarkerBeTap extends State {
                                   alignment: Alignment.centerRight,
                                   width: MediaQuery.of(context).size.width / 2,
                                   child: ElevatedButton(
-                                      onPressed: () => print("前往"),
+                                      onPressed: ()async {
+                                        try {
+                                          print('start launch');
+                                          String url = "https://www.google.com/maps/search/?api=1&query=${position
+                                              .latitude},${position
+                                              .longitude}";
+
+                                          DocumentReference ref = FirebaseFirestore.instance.collection("Species").doc(name_ch);
+                                          DocumentSnapshot snapshot = await ref.get();
+                                          ref.update({'count':snapshot.data()['count']+1});
+
+                                          launch(url);
+                                        } catch(e){
+                                          print(e);
+                                        }
+                                        },
                                       child: Text("前往")),
                                 ),
                                 Container(
@@ -604,7 +622,21 @@ class _MarkerBeTap extends State {
                                 alignment: Alignment.centerRight,
                                 width: MediaQuery.of(context).size.width / 2,
                                 child: ElevatedButton(
-                                    onPressed: () => print("前往"),
+                                    onPressed: () async{
+                                      try {
+                                        print('start launch');
+                                        String url = "https://www.google.com/maps/search/?api=1&query=${position
+                                            .latitude},${position
+                                            .longitude}";
+                                        DocumentReference ref = FirebaseFirestore.instance.collection("Species").doc(name_ch);
+                                        DocumentSnapshot snapshot = await ref.get();
+                                        ref.update({'count':snapshot.data()['count']+1});
+
+                                        launch(url);
+                                      } catch(e){
+                                        print(e);
+                                      }
+                                    },
                                     child: Text("前往")),
                               ),
                               Container(
@@ -677,6 +709,8 @@ class _MarkerBeTap extends State {
                       ),
                     ),
                     Container(
+                      width:MediaQuery.of(context).size.width,height: MediaQuery.of(context).size.height*0.6,
+                      alignment: Alignment.center,
                       child: CircularProgressIndicator(),
                     )
                   ])

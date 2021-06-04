@@ -29,11 +29,11 @@ class _Activity extends State<Activity> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Image Picker'),
+        title: Text('活動'),
       ),
       body: Center(
         child: _image == null
-            ? Text('No image selected.')
+            ? Text('還沒上傳圖片')
             : Image.file(_image),
       ),
       floatingActionButton: FloatingActionButton(

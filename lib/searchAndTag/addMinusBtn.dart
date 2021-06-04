@@ -79,7 +79,7 @@ class _addMinusBtn extends State<addMinusBtn> {
                 ImageConfiguration(size: Size(0.3, 0.3)), 'assets/marker.png');
             query_result.forEach((specie) {
               // print(specie.Location.length);
-              //  print(specie);
+              // print(specie);
               final marker = Marker(
                 markerId: MarkerId(specie.marker_id.toString()),
                 position: LatLng(specie.Latitude, specie.Longitude),
@@ -93,7 +93,7 @@ class _addMinusBtn extends State<addMinusBtn> {
                       isScrollControlled: true,
                       context: widget.mapContext,
                       builder: (context) {
-                        return MarkerBeTap(name_ch: specie.name_ch,location: specie.Location);
+                        return MarkerBeTap(name_ch: specie.name_ch,location: specie.Location,position: LatLng(specie.Latitude, specie.Longitude),);
                       });
                 },
               );

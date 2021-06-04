@@ -281,7 +281,7 @@ class _HomePageState extends State<HomePage>
                            isScrollControlled: true,
                            context: context,
                            builder: (context) {
-                             return MarkerBeTap(name_ch: lis.elementAt(index).infoWindow.title,location: lis.elementAt(index).infoWindow.snippet,);
+                             return MarkerBeTap(name_ch: lis.elementAt(index).infoWindow.title,location: lis.elementAt(index).infoWindow.snippet,position: lis.elementAt(index).position,);
                            });
                     },
                   ));

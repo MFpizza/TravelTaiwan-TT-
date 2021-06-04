@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:http/http.dart';
 import 'AQIBar.dart';
 import 'UVBar.dart';
-import 'dart:convert';
 
 // ignore: must_be_immutable
 class Weather extends StatelessWidget {
@@ -25,7 +23,7 @@ class Weather extends StatelessWidget {
                 return Container(
                   child: Column(
                     children: [
-                      Container(width: MediaQuery.of(context).size.width * 0.35,height: MediaQuery.of(context).size.width * 0.35,decoration: BoxDecoration(image: DecorationImage(image: AssetImage('assets/sunny.png'),fit: BoxFit.cover)),),
+                      getIcon(context, lis.elementAt(index)['weather']),
                       Text("${lis.elementAt(index)['temp']}°C"),
                       Text("${lis.elementAt(index)['weekday']} ${lis.elementAt(index)['time']}")
                     ],
@@ -43,5 +41,15 @@ class Weather extends StatelessWidget {
       ],
     ):Container(height: MediaQuery.of(context).size.height,width: MediaQuery.of(context).size.width,child: Center(child: CircularProgressIndicator(),),);
   }
+  Widget getIcon(context,String type){
+    String iconName;
 
+    if(type.contains('雨')||type.contains('雪'))
+      iconName="rain";
+    else if( type.contains('雲'))
+      iconName='cloud';
+    else iconName='sunny';
+
+    return Container(width: MediaQuery.of(context).size.width * 0.35,height: MediaQuery.of(context).size.width * 0.35,decoration: BoxDecoration(image: DecorationImage(image: AssetImage('assets/$iconName.png'),fit: BoxFit.cover)),);
+  }
 }

@@ -181,6 +181,33 @@ class _FirstPage extends State<FirstPage> {
       ),
     );
   }
+  Widget createContain2(String a, Function changeState, BuildContext context) {
+    myMap.putIfAbsent(a, () => false);
+    return Container(
+      width: 170,
+      height: 170,
+      child: Column(
+        children: [
+            InkWell(
+              child: Container(
+                width: 130,
+                height: 130,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage('assets/material/$a.jpg'),
+                        fit: BoxFit.cover)),
+              ),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => SpeciesPage(
+                    name: a,
+                  ))),
+            ),
+          Divider(),
+          Text(a)
+        ],
+      ),
+    );
+  }
 
   int nowshow = 0;
 
@@ -350,7 +377,7 @@ class _FirstPage extends State<FirstPage> {
                     crossAxisCount: 2),
                 itemCount: lis2.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return createContain(species.elementAt(lis2.elementAt(index)),
+                  return createContain2(species.elementAt(lis2.elementAt(index)),
                       changeState, context);
                 }),
           )
@@ -370,10 +397,11 @@ class _FirstPage extends State<FirstPage> {
       appBar: AppBar(
         backgroundColor: Colors.green,
         title: Center(
-            child: Text(
-          "LOGO",
-          style: TextStyle(fontSize: 30),
-        )),
+            child: Container(
+              width: 200,
+              height: 60,
+              decoration: BoxDecoration(image: DecorationImage(image: AssetImage('assets/logo.png'),fit:BoxFit.cover)),
+            )),
       ),
       body: IndexedStack(index: _selectedIndex, children: buildList(context)),
     );
