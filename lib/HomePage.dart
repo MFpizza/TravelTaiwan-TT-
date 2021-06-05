@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mori_breath/searchAndTag/addMinusBtn.dart';
 import 'package:mori_breath/searchAndTag/search.dart';
 import 'activity/activity.dart';
 import 'core/detail.dart';
@@ -51,6 +52,8 @@ class _HomePageState extends State<HomePage>
   int _selectedIndex = 0;
 
   Tag tag;
+  List<String> history = [];
+  List<Widget> recent_child = [];
 
   void _submitText(String text) {
     print(text);
@@ -134,8 +137,36 @@ class _HomePageState extends State<HomePage>
     ];
   }
 
+  BuildContext mapContext;
+  void addHistory(name_ch) {
+    setState( () {
+      if(history.contains(name_ch)) {
+        history.remove(name_ch);
+      }
+      history.insert(0,
+          name_ch
+      );
+      recent_child.clear();
+      for (var item in history) {
+        recent_child.insert(0,
+            ListTile(
+              leading: Text(
+                "#",
+                style: TextStyle(fontSize: 20),
+              ),
+              title: Text(item),
+              trailing: CircleAvatar(
+                child: addMinusBtn(tags: tag, name_ch: item, setMarkers: setMarkers, getMarkers: getMarkers, mapController: _mapController, mapContext: mapContext, addHistory: addHistory),
+                backgroundColor: Colors.black,
+              ),
+            )
+        );
+      }
+    });
+  }
+
   Widget mapPage(BuildContext context) {
-    BuildContext mapContext = context;
+    mapContext = context;
 
     return Container(
         child: Stack(children: [
@@ -190,10 +221,13 @@ class _HomePageState extends State<HomePage>
                   openBuilder: (context, action) {
                     return SearchPage(
                         tag: tag,
+                        history: history,
+                        recent_child: recent_child,
                         getMarkers: getMarkers,
                         setMarkers: setMarkers,
                         mapController: _mapController,
-                        mapContext: mapContext);
+                        mapContext: mapContext,
+                        addHistory: addHistory);
                   },
                 )),
             Container(
