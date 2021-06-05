@@ -1,9 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:mori_breath/core/detail.dart';
-import 'package:mori_breath/weather/AQIBar.dart';
-import 'package:mori_breath/weather/UVBar.dart';
-import 'package:mori_breath/weather/weather.dart';
 import '../models/Species.dart';
 import 'tag.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -16,6 +13,7 @@ class addMinusBtn extends StatefulWidget {
   final Function setMarkers;
   final String name_ch;
   final Tag tags;
+  final Function addHistory;
 
   addMinusBtn(
       {Key key,
@@ -24,7 +22,8 @@ class addMinusBtn extends StatefulWidget {
       @required this.getMarkers,
       @required this.setMarkers,
       @required this.mapController,
-      @required this.mapContext})
+      @required this.mapContext,
+      @required this.addHistory})
       : super(key: key);
 
   @override
@@ -73,6 +72,7 @@ class _addMinusBtn extends State<addMinusBtn> {
             added = false;
           });
         } else {
+          widget.addHistory(widget.name_ch);
           fetchSpecies(widget.name_ch).then((query_result) async {
             Map<String, Marker> tmp = widget.getMarkers();
             final iconA = await BitmapDescriptor.fromAssetImage(
