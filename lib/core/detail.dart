@@ -442,9 +442,11 @@ class _MarkerBeTap extends State {
                                               fontSize: 20),
                                         ),
                                       ),
-                                      (int.parse(snapshot.data
+                                      ((int.parse(snapshot.data
                                                   .elementAt(0)['radius_idx']) >
-                                              5)
+                                              7)&&int.parse(snapshot.data
+                                          .elementAt(0)['air']) >
+                                          5)
                                           ? InkWell(
                                               child: Container(
                                                 height: 40,
@@ -486,7 +488,100 @@ class _MarkerBeTap extends State {
                                                     );
                                                   }),
                                             )
-                                          : Container()
+                                          : Container(),
+                                        ((int.parse(snapshot.data
+                                          .elementAt(0)['radius_idx']) >
+                                          7)&&int.parse(snapshot.data
+                                          .elementAt(0)['air']) <
+                                          5)
+                                          ? InkWell(
+                                        child: Container(
+                                          height: 40,
+                                          width: 40,
+                                          decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                  image: AssetImage(
+                                                      'assets/warning.png'),
+                                                  fit: BoxFit.cover)),
+                                        ),
+                                        onTap: () => showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                //title: Text('AlertDialog Title'),
+                                                  content:
+                                                  Container(
+                                                      height: 250,
+                                                      child:
+                                                      Column(children: [
+                                                        Container(width: 100,height: 100, decoration: BoxDecoration(
+                                                            image: DecorationImage(
+                                                                image: AssetImage(
+                                                                    'assets/warning.png'),
+                                                                fit: BoxFit.cover))
+                                                        ),
+                                                        Text('紫外線指數過高',style: TextStyle(fontSize: 24,color: Colors.red),),
+                                                        Text('建議外出前請確實做好'
+                                                            '防曬工作',style: TextStyle(fontSize: 16,color: Colors.grey),)
+                                                        ,Container(height: 10,),
+                                                        ElevatedButton(onPressed: (){
+                                                          keyss.currentState.setState(() {
+                                                            nowshow=1;
+                                                          });
+                                                          Navigator.of(context).pop();
+                                                        }, child: Text("點我看更多天氣資訊"))
+                                                      ],))
+
+                                              );
+                                            }),
+                                      )
+                                          : Container(),
+                                        ((int.parse(snapshot.data
+                                          .elementAt(0)['radius_idx']) <
+                                          7)&&int.parse(snapshot.data
+                                          .elementAt(0)['air']) >
+                                          5)
+                                          ? InkWell(
+                                        child: Container(
+                                          height: 40,
+                                          width: 40,
+                                          decoration: BoxDecoration(
+                                              image: DecorationImage(
+                                                  image: AssetImage(
+                                                      'assets/warning.png'),
+                                                  fit: BoxFit.cover)),
+                                        ),
+                                        onTap: () => showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                //title: Text('AlertDialog Title'),
+                                                  content:
+                                                  Container(
+                                                      height: 250,
+                                                      child:
+                                                      Column(children: [
+                                                        Container(width: 100,height: 100, decoration: BoxDecoration(
+                                                            image: DecorationImage(
+                                                                image: AssetImage(
+                                                                    'assets/warning.png'),
+                                                                fit: BoxFit.cover))
+                                                        ),
+                                                        Text('空氣汙染過高',style: TextStyle(fontSize: 24,color: Colors.red),),
+                                                        Text('建議外出前請確實做好'
+                                                            '防曬工作',style: TextStyle(fontSize: 16,color: Colors.grey),)
+                                                        ,Container(height: 10,),
+                                                        ElevatedButton(onPressed: (){
+                                                          keyss.currentState.setState(() {
+                                                            nowshow=1;
+                                                          });
+                                                          Navigator.of(context).pop();
+                                                        }, child: Text("點我看更多天氣資訊"))
+                                                      ],))
+                                              );
+                                            }),
+                                      )
+                                          : Container(),
                                     ]))
                               ],
                             )

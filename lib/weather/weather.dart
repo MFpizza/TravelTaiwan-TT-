@@ -36,7 +36,7 @@ class Weather extends StatelessWidget {
         UVBar(
             uv_value:
             int.parse(lis.elementAt(0)['radius_idx'])),
-        AQIBar(aqi_value: 5),
+        AQIBar(aqi_value: (lis.elementAt(0)['air']).toInt()),
         SizedBox(height: 20)
       ],
     ):Container(height: MediaQuery.of(context).size.height,width: MediaQuery.of(context).size.width,child: Center(child: CircularProgressIndicator(),),);
