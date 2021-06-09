@@ -14,71 +14,22 @@ class AQIBar extends StatelessWidget {
     Color valueTextColor;
     var boxLeftMarginValue = 0.0;
 
-    switch(aqi_value){
-      case 0:
-        boxLeftMarginValue = barWidth * 0;
-        valueTextColor = Colors.lightGreen;
-      break;
-      case 1:
-        boxLeftMarginValue = barWidth * 0.0714285714285714;
-        valueTextColor = Colors.lightGreen;
-      break;
-      case 2:
-        boxLeftMarginValue = barWidth * 0.1428571428571428;
-        valueTextColor = Colors.lightGreen;
-      break;
-      case 3:
-        boxLeftMarginValue = barWidth * 0.2142857142857142;
-        valueTextColor = Colors.yellow;
-      break;
-      case 4:
-        boxLeftMarginValue = barWidth * 0.2857142857142856;
-        valueTextColor = Colors.yellow;
-      break;
-      case 5:
-        boxLeftMarginValue = barWidth * 0.357142857142857;
-        valueTextColor = Colors.orange;
-      break;
-      case 6:
-        boxLeftMarginValue = barWidth * 0.4285714285714284;
-        valueTextColor = Colors.orange;
-      break;
-      case 7:
-        boxLeftMarginValue = barWidth * 0.4999999999999998;
-        valueTextColor = Colors.red[800];
-      break;
-      case 8:
-        boxLeftMarginValue = barWidth * 0.5714285714285712;
-        valueTextColor = Colors.red[800];
-      break;
-      case 9:
-        boxLeftMarginValue = barWidth * 0.6428571428571426;
-        valueTextColor = Colors.purple;
-      break;
-      case 10:
-        boxLeftMarginValue = barWidth * 0.714285714285714;
-        valueTextColor = Colors.purple;
-      break;
-      case 11:
-        boxLeftMarginValue = barWidth * 0.7857142857142854;
-        valueTextColor = Colors.brown[800];
-      break;
-      case 12:
-        boxLeftMarginValue = barWidth * 0.8571428571428568;
-        valueTextColor = Colors.brown[800];
-      break;
-      case 13:
-        boxLeftMarginValue = barWidth * 0.9285714285714282;
-        valueTextColor = Colors.black;
-      break;
-      case 14:
-        boxLeftMarginValue = barWidth;
-        valueTextColor = Colors.black;
-      break;
-      default:
-        boxLeftMarginValue = barWidth;
-        valueTextColor = Colors.black;
-    }
+    boxLeftMarginValue = barWidth * (aqi_value / 10);
+
+    if(aqi_value <= 1)
+      valueTextColor = Colors.lightGreen;
+    else if(aqi_value <= 2)
+      valueTextColor = Colors.yellow;
+    else if(aqi_value <= 3)
+      valueTextColor = Colors.orange;
+    else if(aqi_value <= 4)
+      valueTextColor = Colors.red[800];
+    else if(aqi_value <= 6)
+      valueTextColor = Colors.purple;
+    else if(aqi_value <= 8)
+      valueTextColor = Colors.brown[800];
+    else if(aqi_value <= 10)
+      valueTextColor = Colors.black;
 
     return Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -164,7 +115,7 @@ class AQIBar extends StatelessWidget {
                 CustomPaint(
                   painter: ArrowPainter(barWidth: barWidth),
                 ),
-                Text("14", style: TextStyle(color: Colors.grey))
+                Text("10", style: TextStyle(color: Colors.grey))
               ],
             ),
           ),
@@ -185,7 +136,7 @@ class AQIBar extends StatelessWidget {
                     Expanded(
                       flex: 2,
                       child: Container(
-                        child: Text("0~2", style: TextStyle(color: Colors.lightGreen, fontSize: 20)),
+                        child: Text("0~1", style: TextStyle(color: Colors.lightGreen, fontSize: 20)),
                       )
                     ),
                     Expanded(
@@ -212,7 +163,7 @@ class AQIBar extends StatelessWidget {
                     Expanded(
                         flex: 2,
                         child: Container(
-                          child: Text("3~4", style: TextStyle(color: Colors.yellow, fontSize: 20)),
+                          child: Text("1~2", style: TextStyle(color: Colors.yellow, fontSize: 20)),
                         )
                     ),
                     Expanded(
@@ -239,7 +190,7 @@ class AQIBar extends StatelessWidget {
                     Expanded(
                         flex: 2,
                         child: Container(
-                          child: Text("5~6", style: TextStyle(color: Colors.orange, fontSize: 20)),
+                          child: Text("2~3", style: TextStyle(color: Colors.orange, fontSize: 20)),
                         )
                     ),
                     Expanded(
@@ -266,7 +217,7 @@ class AQIBar extends StatelessWidget {
                     Expanded(
                         flex: 2,
                         child: Container(
-                          child: Text("7~8", style: TextStyle(color: Colors.red[800], fontSize: 20)),
+                          child: Text("3~4", style: TextStyle(color: Colors.red[800], fontSize: 20)),
                         )
                     ),
                     Expanded(
@@ -293,7 +244,7 @@ class AQIBar extends StatelessWidget {
                     Expanded(
                         flex: 2,
                         child: Container(
-                          child: Text("9~10", style: TextStyle(color: Colors.purple, fontSize: 20)),
+                          child: Text("4~6", style: TextStyle(color: Colors.purple, fontSize: 20)),
                         )
                     ),
                     Expanded(
@@ -320,7 +271,7 @@ class AQIBar extends StatelessWidget {
                     Expanded(
                         flex: 2,
                         child: Container(
-                          child: Text("11~12", style: TextStyle(color: Colors.brown[800], fontSize: 20)),
+                          child: Text("6~8", style: TextStyle(color: Colors.brown[800], fontSize: 20)),
                         )
                     ),
                     Expanded(
@@ -347,7 +298,7 @@ class AQIBar extends StatelessWidget {
                     Expanded(
                         flex: 2,
                         child: Container(
-                          child: Text("13~14", style: TextStyle(color: Colors.black, fontSize: 20)),
+                          child: Text("8~10", style: TextStyle(color: Colors.black, fontSize: 20)),
                         )
                     ),
                     Expanded(
