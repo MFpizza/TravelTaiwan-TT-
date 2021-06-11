@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:mori_breath/core/detail.dart';
 import 'package:mori_breath/illustrate/illustrate.dart';
 
 // import 'package:cloud_firestore/cloud_firestore.dart';
@@ -31,6 +32,138 @@ class _MemberPage extends State<MemberPage> {
 
   User user;
   int nowShow = 0;
+  Widget createContain(String a, Function changeState, BuildContext context) {
+    myMap.putIfAbsent(a, () => false);
+    return Container(
+      width: 170,
+      height: 170,
+      child: Column(
+        children: [
+          Stack(children: [
+            InkWell(
+              child: Container(
+                width: 130,
+                height: 130,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage('assets/material/$a.jpg'),
+                        fit: BoxFit.cover)),
+              ),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (BuildContext context) => SpeciesPage(
+                    name: a,
+                  ))),
+            ),
+            Container(
+              padding: EdgeInsets.all(5),
+              width: 130,
+              height: 130,
+              alignment: Alignment.bottomRight,
+              child: Container(
+                //  color: Colors.orangeAccent,
+                width: 40,
+                height: 40,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.solidHeart,
+                      color: Colors.white,
+                    ),
+                    myMap[a]
+                        ? IconButton(
+                      icon: FaIcon(
+                        FontAwesomeIcons.solidHeart,
+                        color: Colors.red,
+                        size: IconThemeData.fallback().size - 5,
+                      ),
+                      onPressed: () {
+                        if (user == null) {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return CupertinoAlertDialog(
+                                  content: Text(
+                                    "請先進行登入才能收藏",
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                  actions: <Widget>[
+                                    CupertinoButton(
+                                      child: Text("知道了"),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
+                        } else {
+                          myMap[a] = !myMap[a];
+                          FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user.email)
+                              .update({"favorite": myMap});
+                          changeState();
+                        }
+                      },
+                    )
+                        : IconButton(
+                      icon: FaIcon(
+                        FontAwesomeIcons.solidHeart,
+                        color: Colors.grey,
+                        size: IconThemeData.fallback().size - 5,
+                      ),
+                      onPressed: () {
+                        if (FirebaseAuth.instance.currentUser == null) {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return CupertinoAlertDialog(
+                                  content: Text(
+                                    "請先進行登入才能收藏",
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                  actions: <Widget>[
+                                    // CupertinoButton(
+                                    //   child: Text("取消"),
+                                    //   onPressed: () {
+                                    //     Navigator.pop(context);
+                                    //   },
+                                    // ),
+                                    CupertinoButton(
+                                      child: Text("知道了"),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ],
+                                );
+                              });
+                        } else {
+                          myMap[a] = !myMap[a];
+
+                          FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(user.email)
+                              .update({"favorite": myMap});
+                          changeState();
+                        }
+                      },
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ]),
+          Divider(),
+          Text(a)
+        ],
+      ),
+    );
+  }
+  void changeState() {
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -145,88 +278,89 @@ class _MemberPage extends State<MemberPage> {
                                         crossAxisCount: 2),
                                 itemCount: lis.length,
                                 itemBuilder: (BuildContext context, int index) {
-                                  return Container(
-                                    width: 170,
-                                    height: 170,
-                                    child: Column(
-                                      children: [
-                                        Stack(children: [
-                                          Container(
-                                            width: 130,
-                                            height: 130,
-                                            decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                    image: AssetImage(
-                                                        'assets/material/${lis.elementAt(index)}.jpg'),
-                                                    fit: BoxFit.cover)),
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.all(5),
-                                            width: 130,
-                                            height: 130,
-                                            alignment: Alignment.bottomRight,
-                                            child: Container(
-                                              //  color: Colors.orangeAccent,
-                                              width: 40,
-                                              height: 40,
-                                              child: Stack(
-                                                alignment: Alignment.center,
-                                                children: [
-                                                  FaIcon(
-                                                    FontAwesomeIcons.solidHeart,
-                                                    color: Colors.white,
-                                                  ),
-                                                  myMap[lis.elementAt(index)]
-                                                      ? IconButton(
-                                                          icon: FaIcon(
-                                                            FontAwesomeIcons
-                                                                .solidHeart,
-                                                            color: Colors.red,
-                                                            size: IconThemeData
-                                                                        .fallback()
-                                                                    .size -
-                                                                5,
-                                                          ),
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              myMap[lis.elementAt(
-                                                                      index)] =
-                                                                  !myMap[lis
-                                                                      .elementAt(
-                                                                          index)];
-                                                            });
-                                                          },
-                                                        )
-                                                      : IconButton(
-                                                          icon: FaIcon(
-                                                            FontAwesomeIcons
-                                                                .solidHeart,
-                                                            color: Colors.grey,
-                                                            size: IconThemeData
-                                                                        .fallback()
-                                                                    .size -
-                                                                5,
-                                                          ),
-                                                          onPressed: () {
-                                                            setState(() {
-                                                              myMap[lis.elementAt(
-                                                                      index)] =
-                                                                  !myMap[lis
-                                                                      .elementAt(
-                                                                          index)];
-                                                            });
-                                                          },
-                                                        )
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ]),
-                                        Divider(),
-                                        Text(lis.elementAt(index))
-                                      ],
-                                    ),
-                                  );
+                                  return createContain(lis.elementAt(index), changeState, context);
+                                  // return Container(
+                                  //   width: 170,
+                                  //   height: 170,
+                                  //   child: Column(
+                                  //     children: [
+                                  //       Stack(children: [
+                                  //         Container(
+                                  //           width: 130,
+                                  //           height: 130,
+                                  //           decoration: BoxDecoration(
+                                  //               image: DecorationImage(
+                                  //                   image: AssetImage(
+                                  //                       'assets/material/${lis.elementAt(index)}.jpg'),
+                                  //                   fit: BoxFit.cover)),
+                                  //         ),
+                                  //         Container(
+                                  //           padding: EdgeInsets.all(5),
+                                  //           width: 130,
+                                  //           height: 130,
+                                  //           alignment: Alignment.bottomRight,
+                                  //           child: Container(
+                                  //             //  color: Colors.orangeAccent,
+                                  //             width: 40,
+                                  //             height: 40,
+                                  //             child: Stack(
+                                  //               alignment: Alignment.center,
+                                  //               children: [
+                                  //                 FaIcon(
+                                  //                   FontAwesomeIcons.solidHeart,
+                                  //                   color: Colors.white,
+                                  //                 ),
+                                  //                 myMap[lis.elementAt(index)]
+                                  //                     ? IconButton(
+                                  //                         icon: FaIcon(
+                                  //                           FontAwesomeIcons
+                                  //                               .solidHeart,
+                                  //                           color: Colors.red,
+                                  //                           size: IconThemeData
+                                  //                                       .fallback()
+                                  //                                   .size -
+                                  //                               5,
+                                  //                         ),
+                                  //                         onPressed: () {
+                                  //                           setState(() {
+                                  //                             myMap[lis.elementAt(
+                                  //                                     index)] =
+                                  //                                 !myMap[lis
+                                  //                                     .elementAt(
+                                  //                                         index)];
+                                  //                           });
+                                  //                         },
+                                  //                       )
+                                  //                     : IconButton(
+                                  //                         icon: FaIcon(
+                                  //                           FontAwesomeIcons
+                                  //                               .solidHeart,
+                                  //                           color: Colors.grey,
+                                  //                           size: IconThemeData
+                                  //                                       .fallback()
+                                  //                                   .size -
+                                  //                               5,
+                                  //                         ),
+                                  //                         onPressed: () {
+                                  //                           setState(() {
+                                  //                             myMap[lis.elementAt(
+                                  //                                     index)] =
+                                  //                                 !myMap[lis
+                                  //                                     .elementAt(
+                                  //                                         index)];
+                                  //                           });
+                                  //                         },
+                                  //                       )
+                                  //               ],
+                                  //             ),
+                                  //           ),
+                                  //         ),
+                                  //       ]),
+                                  //       Divider(),
+                                  //       Text(lis.elementAt(index))
+                                  //     ],
+                                  //   ),
+                                  // );
                                 }): Container(
                               child: Center(
                                 child: Text('尚未登入'),

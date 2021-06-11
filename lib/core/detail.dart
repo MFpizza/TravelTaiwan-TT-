@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -318,15 +319,15 @@ class MarkerBeTap extends StatefulWidget {
   final String location;
   final LatLng position;
 
-  MarkerBeTap({this.name_ch, this.location,@required this.position});
+  MarkerBeTap({this.name_ch, this.location, @required this.position});
 
   _MarkerBeTap createState() =>
-      _MarkerBeTap(name_ch: name_ch, Location: location,position: position);
+      _MarkerBeTap(name_ch: name_ch, Location: location, position: position);
 }
 
 class _MarkerBeTap extends State {
   //final Species specie;
-  _MarkerBeTap({this.name_ch, this.Location,this.position});
+  _MarkerBeTap({this.name_ch, this.Location, this.position});
 
   final String name_ch;
   final String Location;
@@ -334,7 +335,13 @@ class _MarkerBeTap extends State {
   int nowshow = 0;
   List weather = null;
 
-  final GlobalKey keyss= GlobalKey();
+  final GlobalKey keyss = GlobalKey();
+
+  Widget alert = Container();
+
+  bool alertb = false;
+
+  int purpleAl = 3, airPoll = 5;
 
   @override
   Widget build(BuildContext context) {
@@ -342,7 +349,30 @@ class _MarkerBeTap extends State {
     return FutureBuilder(
       future: getWeather(Location),
       builder: (context, AsyncSnapshot<List> snapshot) {
+        if (snapshot.hasError) setState(() {});
+
         if (snapshot.hasData) {
+          String titleAlert, contentAlert;
+          print((int.parse(snapshot.data.elementAt(0)['radius_idx'])));
+          print((snapshot.data.elementAt(0)['air'].toInt()));
+          if ((int.parse(snapshot.data.elementAt(0)['radius_idx']) >
+                  purpleAl) &&
+              (snapshot.data.elementAt(0)['air'].toInt()) > airPoll) {
+            titleAlert = '紫外線指數及空氣汙染過高';
+            contentAlert = '建議外出前請確實做好'
+                '防護工作';
+          } else if ((int.parse(snapshot.data.elementAt(0)['radius_idx']) <
+                  purpleAl) &&
+              (snapshot.data.elementAt(0)['air'].toInt()) > airPoll) {
+            titleAlert = '空氣汙染過高';
+            contentAlert = '建議外出前請佩戴好口罩';
+          } else if ((int.parse(snapshot.data.elementAt(0)['radius_idx']) >
+                  purpleAl) &&
+              (snapshot.data.elementAt(0)['air'].toInt()) < airPoll) {
+            titleAlert = '紫外線指數過高';
+            contentAlert = '建議外出前請確實做好'
+                '防曬工作';
+          }
           return Container(
             height: MediaQuery.of(context).size.height * 0.8,
             width: MediaQuery.of(context).size.width,
@@ -400,22 +430,44 @@ class _MarkerBeTap extends State {
                                   alignment: Alignment.centerRight,
                                   width: MediaQuery.of(context).size.width / 2,
                                   child: ElevatedButton(
-                                      onPressed: ()async {
+                                      onPressed: () async {
                                         try {
                                           print('start launch');
-                                          String url = "https://www.google.com/maps/search/?api=1&query=${position
-                                              .latitude},${position
-                                              .longitude}";
+                                          String url =
+                                              "https://www.google.com/maps/search/?api=1&query=${position.latitude},${position.longitude}";
 
-                                          DocumentReference ref = FirebaseFirestore.instance.collection("Species").doc(name_ch);
-                                          DocumentSnapshot snapshot = await ref.get();
-                                          ref.update({'count':snapshot.data()['count']+1});
+                                          DocumentReference ref =
+                                              FirebaseFirestore.instance
+                                                  .collection("Species")
+                                                  .doc(name_ch);
+                                          DocumentSnapshot snapshot =
+                                              await ref.get();
+                                          ref.update({
+                                            'count':
+                                                snapshot.data()['count'] + 1
+                                          });
 
+                                          if (FirebaseAuth
+                                                  .instance.currentUser !=
+                                              null) {
+                                            DocumentReference ref2 =
+                                                FirebaseFirestore.instance
+                                                    .collection("users")
+                                                    .doc(FirebaseAuth.instance
+                                                        .currentUser.email);
+                                            DocumentSnapshot snapshot2 =
+                                                await ref2.get();
+                                            ref2.update({
+                                              'count':
+                                                  snapshot2.data()['count'] + 1
+                                            });
+                                            print(snapshot2.data()['count']);
+                                          }
                                           launch(url);
-                                        } catch(e){
+                                        } catch (e) {
                                           print(e);
                                         }
-                                        },
+                                      },
                                       child: Text("前往")),
                                 ),
                                 Container(
@@ -442,11 +494,13 @@ class _MarkerBeTap extends State {
                                               fontSize: 20),
                                         ),
                                       ),
-                                      ((int.parse(snapshot.data
-                                                  .elementAt(0)['radius_idx']) >
-                                              7)&&int.parse(snapshot.data
-                                          .elementAt(0)['air']) >
-                                          5)
+                                      ((int.parse(snapshot.data.elementAt(
+                                                      0)['radius_idx']) >
+                                                  purpleAl) ||
+                                              (snapshot.data
+                                                      .elementAt(0)['air']
+                                                      .toInt()) >
+                                                  airPoll)
                                           ? InkWell(
                                               child: Container(
                                                 height: 40,
@@ -461,126 +515,58 @@ class _MarkerBeTap extends State {
                                                   context: context,
                                                   builder: (context) {
                                                     return AlertDialog(
-                                                      //title: Text('AlertDialog Title'),
-                                                      content:
-                                                          Container(
-                                                              height: 250,
-                                                              child:
-                                                        Column(children: [
-                                                          Container(width: 100,height: 100, decoration: BoxDecoration(
-                                                              image: DecorationImage(
-                                                                  image: AssetImage(
-                                                                      'assets/warning.png'),
-                                                                  fit: BoxFit.cover))
-                                                          ),
-                                                          Text('紫外線指數過高',style: TextStyle(fontSize: 24,color: Colors.red),),
-                                                          Text('建議外出前請確實做好'
-                                                              '防曬工作',style: TextStyle(fontSize: 16,color: Colors.grey),)
-                                                          ,Container(height: 10,),
-                                                        ElevatedButton(onPressed: (){
-                                                    keyss.currentState.setState(() {
-                                                    nowshow=1;
-                                                    });
-                                                    Navigator.of(context).pop();
-                                                    }, child: Text("點我看更多天氣資訊"))
-                                                        ],))
-
-                                                    );
+                                                        //title: Text('AlertDialog Title'),
+                                                        content: Container(
+                                                            height: 260,
+                                                            child: Column(
+                                                              children: [
+                                                                Container(
+                                                                    width: 100,
+                                                                    height: 100,
+                                                                    decoration: BoxDecoration(
+                                                                        image: DecorationImage(
+                                                                            image:
+                                                                                AssetImage('assets/warning.png'),
+                                                                            fit: BoxFit.cover))),
+                                                                Text(
+                                                                  titleAlert,
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          24,
+                                                                      color: Colors
+                                                                          .red),
+                                                                ),
+                                                                Text(
+                                                                  contentAlert,
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          16,
+                                                                      color: Colors
+                                                                          .grey),
+                                                                ),
+                                                                Container(
+                                                                  height: 10,
+                                                                ),
+                                                                ElevatedButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      keyss
+                                                                          .currentState
+                                                                          .setState(
+                                                                              () {
+                                                                        nowshow =
+                                                                            1;
+                                                                      });
+                                                                      Navigator.of(
+                                                                              context)
+                                                                          .pop();
+                                                                    },
+                                                                    child: Text(
+                                                                        "點我看更多天氣資訊"))
+                                                              ],
+                                                            )));
                                                   }),
                                             )
-                                          : Container(),
-                                        ((int.parse(snapshot.data
-                                          .elementAt(0)['radius_idx']) >
-                                          7)&&int.parse(snapshot.data
-                                          .elementAt(0)['air']) <
-                                          5)
-                                          ? InkWell(
-                                        child: Container(
-                                          height: 40,
-                                          width: 40,
-                                          decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                  image: AssetImage(
-                                                      'assets/warning.png'),
-                                                  fit: BoxFit.cover)),
-                                        ),
-                                        onTap: () => showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return AlertDialog(
-                                                //title: Text('AlertDialog Title'),
-                                                  content:
-                                                  Container(
-                                                      height: 250,
-                                                      child:
-                                                      Column(children: [
-                                                        Container(width: 100,height: 100, decoration: BoxDecoration(
-                                                            image: DecorationImage(
-                                                                image: AssetImage(
-                                                                    'assets/warning.png'),
-                                                                fit: BoxFit.cover))
-                                                        ),
-                                                        Text('紫外線指數過高',style: TextStyle(fontSize: 24,color: Colors.red),),
-                                                        Text('建議外出前請確實做好'
-                                                            '防曬工作',style: TextStyle(fontSize: 16,color: Colors.grey),)
-                                                        ,Container(height: 10,),
-                                                        ElevatedButton(onPressed: (){
-                                                          keyss.currentState.setState(() {
-                                                            nowshow=1;
-                                                          });
-                                                          Navigator.of(context).pop();
-                                                        }, child: Text("點我看更多天氣資訊"))
-                                                      ],))
-
-                                              );
-                                            }),
-                                      )
-                                          : Container(),
-                                        ((int.parse(snapshot.data
-                                          .elementAt(0)['radius_idx']) <
-                                          7)&&int.parse(snapshot.data
-                                          .elementAt(0)['air']) >
-                                          5)
-                                          ? InkWell(
-                                        child: Container(
-                                          height: 40,
-                                          width: 40,
-                                          decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                  image: AssetImage(
-                                                      'assets/warning.png'),
-                                                  fit: BoxFit.cover)),
-                                        ),
-                                        onTap: () => showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return AlertDialog(
-                                                //title: Text('AlertDialog Title'),
-                                                  content:
-                                                  Container(
-                                                      height: 250,
-                                                      child:
-                                                      Column(children: [
-                                                        Container(width: 100,height: 100, decoration: BoxDecoration(
-                                                            image: DecorationImage(
-                                                                image: AssetImage(
-                                                                    'assets/warning.png'),
-                                                                fit: BoxFit.cover))
-                                                        ),
-                                                        Text('空氣汙染過高',style: TextStyle(fontSize: 24,color: Colors.red),),
-                                                        Text('建議外出前請確實做好'
-                                                            '防曬工作',style: TextStyle(fontSize: 16,color: Colors.grey),)
-                                                        ,Container(height: 10,),
-                                                        ElevatedButton(onPressed: (){
-                                                          keyss.currentState.setState(() {
-                                                            nowshow=1;
-                                                          });
-                                                          Navigator.of(context).pop();
-                                                        }, child: Text("點我看更多天氣資訊"))
-                                                      ],))
-                                              );
-                                            }),
-                                      )
                                           : Container(),
                                     ]))
                               ],
@@ -600,63 +586,63 @@ class _MarkerBeTap extends State {
                 StatefulBuilder(
                     key: keyss,
                     builder: (context, StateSetter set) {
-                  return Column(children: [
-                    Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 70,
-                        child: Row(
-                          children: [
-                            TextButton(
-                              child: Text(
-                                "詳細資料",
-                                style: TextStyle(
-                                    color: Colors.red,
-                                    fontSize: 20,
-                                    decoration: TextDecoration.underline,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              onPressed: () {
-                                set(() {
-                                  nowshow = 0;
-                                });
-                              },
+                      return Column(children: [
+                        Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: 70,
+                            child: Row(
+                              children: [
+                                TextButton(
+                                  child: Text(
+                                    "詳細資料",
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 20,
+                                        decoration: TextDecoration.underline,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  onPressed: () {
+                                    set(() {
+                                      nowshow = 0;
+                                    });
+                                  },
+                                ),
+                                VerticalDivider(),
+                                TextButton(
+                                  child: Text(
+                                    "天氣",
+                                    style: TextStyle(fontSize: 20),
+                                  ),
+                                  onPressed: () {
+                                    set(() {
+                                      nowshow = 1;
+                                    });
+                                  },
+                                ),
+                              ],
+                              mainAxisAlignment: MainAxisAlignment.center,
+                            )),
+                        IndexedStack(index: nowshow, children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: Column(
+                              children: [
+                                Detail(
+                                  name: name_ch,
+                                ),
+                                Divider(),
+                                SpeciesPhoto(
+                                  name: name_ch,
+                                )
+                              ],
                             ),
-                            VerticalDivider(),
-                            TextButton(
-                              child: Text(
-                                "天氣",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                              onPressed: () {
-                                set(() {
-                                  nowshow = 1;
-                                });
-                              },
-                            ),
-                          ],
-                          mainAxisAlignment: MainAxisAlignment.center,
-                        )),
-                    IndexedStack(index: nowshow, children: [
-                      Container(
-                        width: MediaQuery.of(context).size.width,
-                        child: Column(
-                          children: [
-                            Detail(
-                              name: name_ch,
-                            ),
-                            Divider(),
-                            SpeciesPhoto(
-                              name: name_ch,
-                            )
-                          ],
-                        ),
-                      ),
-                      Container(
-                        child: Weather(lis: snapshot.data),
-                      )
-                    ])
-                  ]);
-                })
+                          ),
+                          Container(
+                            child: Weather(lis: snapshot.data),
+                          )
+                        ])
+                      ]);
+                    })
               ],
             ),
           );
@@ -717,18 +703,38 @@ class _MarkerBeTap extends State {
                                 alignment: Alignment.centerRight,
                                 width: MediaQuery.of(context).size.width / 2,
                                 child: ElevatedButton(
-                                    onPressed: () async{
+                                    onPressed: () async {
                                       try {
                                         print('start launch');
-                                        String url = "https://www.google.com/maps/search/?api=1&query=${position
-                                            .latitude},${position
-                                            .longitude}";
-                                        DocumentReference ref = FirebaseFirestore.instance.collection("Species").doc(name_ch);
-                                        DocumentSnapshot snapshot = await ref.get();
-                                        ref.update({'count':snapshot.data()['count']+1});
-
+                                        String url =
+                                            "https://www.google.com/maps/search/?api=1&query=${position.latitude},${position.longitude}";
+                                        DocumentReference ref =
+                                            FirebaseFirestore.instance
+                                                .collection("Species")
+                                                .doc(name_ch);
+                                        DocumentSnapshot snapshot =
+                                            await ref.get();
+                                        ref.update({
+                                          'count': snapshot.data()['count'] + 1
+                                        });
+                                        if (FirebaseAuth.instance.currentUser !=
+                                            null) {
+                                          DocumentReference ref2 =
+                                              FirebaseFirestore
+                                                  .instance
+                                                  .collection("users")
+                                                  .doc(FirebaseAuth.instance
+                                                      .currentUser.email);
+                                          DocumentSnapshot snapshot2 =
+                                              await ref2.get();
+                                          ref2.update({
+                                            'count':
+                                                snapshot2.data()['count'] + 1
+                                          });
+                                          print(snapshot2.data()['count']);
+                                        }
                                         launch(url);
-                                      } catch(e){
+                                      } catch (e) {
                                         print(e);
                                       }
                                     },
@@ -804,7 +810,8 @@ class _MarkerBeTap extends State {
                       ),
                     ),
                     Container(
-                      width:MediaQuery.of(context).size.width,height: MediaQuery.of(context).size.height*0.6,
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height * 0.6,
                       alignment: Alignment.center,
                       child: CircularProgressIndicator(),
                     )
@@ -819,15 +826,16 @@ class _MarkerBeTap extends State {
   }
 
   Future<List> getWeather(String location) async {
+    Map<String, dynamic> map;
     var url = Uri.parse(
         'https://ar3s.dev/weather/web-api?country=${location.substring(0, 3)}&district=${location.substring(3, 6)}');
     print('start get weather');
+    print(url);
     var response = await get(url);
     print(response.body);
-    Map<String, dynamic> map = jsonDecode(response.body);
+    map = jsonDecode(response.body);
+
     List lis = map.values.toList();
-    // print(lis);
-    // print('return');
     return lis;
   }
 }

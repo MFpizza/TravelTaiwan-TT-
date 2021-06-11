@@ -19,7 +19,9 @@ class _Activity extends State<Activity> {
 
   Future getImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.camera);
-
+    print(pickedFile);
+    if(pickedFile==null)
+      return;
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
@@ -79,7 +81,26 @@ class _Activity extends State<Activity> {
             });
       }
     } catch (e) {
+      EasyLoading.dismiss();
       print(e);
+      showDialog(
+          context: context,
+          builder: (context) {
+            return CupertinoAlertDialog(
+              content: Text(
+                "有地方出錯了，請回報給\ns1071443@g.yzu.edu.tw",
+                style: TextStyle(fontSize: 20),
+              ),
+              actions: <Widget>[
+                CupertinoButton(
+                  child: Text("確定"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          });
     }
   }
 

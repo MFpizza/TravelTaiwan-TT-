@@ -100,10 +100,9 @@ class _Illustrate extends State<Illustrate> {
 
   Widget createContain(String a, Function changeState, BuildContext context) {
     myMap.putIfAbsent(a, () => false);
-
     return Container(
       width: 170,
-      height: 170,
+      height: 180,
       child: Column(
         children: [
           Stack(children: [
@@ -112,6 +111,7 @@ class _Illustrate extends State<Illustrate> {
                 width: 130,
                 height: 130,
                 decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
                         image: AssetImage('assets/material/$a.jpg'),
                         fit: BoxFit.cover)),
@@ -227,8 +227,8 @@ class _Illustrate extends State<Illustrate> {
               ),
             ),
           ]),
+          Text(a,style: TextStyle(fontSize: a.length>5?14:20),),
           Divider(),
-          Text(a)
         ],
       ),
     );
@@ -257,7 +257,7 @@ class _Illustrate extends State<Illustrate> {
 }
 
 List<String> species = [
-  "一枝黃花",
+"一枝黃花",
 "七葉一枝花",
 "咖啡樹",
 "大枝掛繡球",

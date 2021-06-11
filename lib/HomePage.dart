@@ -257,7 +257,6 @@ class _HomePageState extends State<HomePage>
       dragBottom()
     ]));
   }
-
   Future<void> _onMapCreated(GoogleMapController controller) async {
     setState(() {
       _mapController = controller;
@@ -275,8 +274,6 @@ class _HomePageState extends State<HomePage>
       builder: (BuildContext context, ScrollController scrollController) {
         if (_markers.length == 0) {
           return Container(
-            padding: EdgeInsets.all(50),
-            child: Text('no result'),
           );
         }
         return Container(
@@ -285,7 +282,7 @@ class _HomePageState extends State<HomePage>
               borderRadius: BorderRadius.vertical(top: Radius.circular(40.0))),
           child: Column(children: [
             Center(child: Container(height:20,width:10,child:Icon(Icons.menu),)),
-          Expanded(
+            Expanded(
                // height: MediaQuery.of(context).size.height*0.8,
                 child:ListView.builder(
             controller: scrollController,
