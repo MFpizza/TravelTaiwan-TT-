@@ -22,7 +22,7 @@ class SpeciesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(backgroundColor: Colors.green,),
       body: Stack(
         children: [
           Container(
@@ -349,10 +349,191 @@ class _MarkerBeTap extends State {
     return FutureBuilder(
       future: getWeather(Location),
       builder: (context, AsyncSnapshot<List> snapshot) {
-        if (snapshot.hasError) setState(() {});
-
+        if (snapshot.hasError) {
+          print('has error');
+          return Container(
+            height: MediaQuery.of(context).size.height * 0.8,
+            width: MediaQuery.of(context).size.width,
+            decoration: new BoxDecoration(
+              color: Colors.white,
+              borderRadius: new BorderRadius.only(
+                topLeft: const Radius.circular(25.0),
+                topRight: const Radius.circular(25.0),
+              ),
+            ),
+            child: ListView(
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.25,
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        width: MediaQuery.of(context).size.width / 2,
+                        height: MediaQuery.of(context).size.height * 0.3,
+                        child: Container(
+                          width: MediaQuery.of(context).size.width / 3,
+                          height: MediaQuery.of(context).size.width / 3,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              image: DecorationImage(
+                                  image: AssetImage(
+                                    'assets/material/${name_ch}.jpg',
+                                  ),
+                                  fit: BoxFit.cover)),
+                        ),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width / 2,
+                        height: MediaQuery.of(context).size.height * 0.3,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              name_ch,
+                              style: TextStyle(fontSize: 24),
+                            ),
+                            Text(
+                              Location,
+                              style: TextStyle(fontSize: 18, color: Colors.grey),
+                            ),
+                            Divider(),
+                            Stack(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.only(right: 10),
+                                  alignment: Alignment.centerRight,
+                                  width: MediaQuery.of(context).size.width / 2,
+                                  child: ElevatedButton(
+                                      onPressed: () async {
+                                        try {
+                                          print('start launch');
+                                          String url =
+                                              "https://www.google.com/maps/search/?api=1&query=${position.latitude},${position.longitude}";
+                                          DocumentReference ref =
+                                          FirebaseFirestore.instance
+                                              .collection("Species")
+                                              .doc(name_ch);
+                                          DocumentSnapshot snapshot =
+                                          await ref.get();
+                                          ref.update({
+                                            'count': snapshot.data()['count'] + 1
+                                          });
+                                          if (FirebaseAuth.instance.currentUser !=
+                                              null) {
+                                            DocumentReference ref2 =
+                                            FirebaseFirestore
+                                                .instance
+                                                .collection("users")
+                                                .doc(FirebaseAuth.instance
+                                                .currentUser.email);
+                                            DocumentSnapshot snapshot2 =
+                                            await ref2.get();
+                                            ref2.update({
+                                              'count':
+                                              snapshot2.data()['count'] + 1
+                                            });
+                                            print(snapshot2.data()['count']);
+                                          }
+                                          launch(url);
+                                        } catch (e) {
+                                          print(e);
+                                        }
+                                      },
+                                      child: Text("前往")),
+                                ),
+                                // Container(
+                                //   child: CircularProgressIndicator(),
+                                // )
+                              ],
+                            )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Divider(
+                  height: 20,
+                  thickness: 5,
+                  indent: 20,
+                  endIndent: 20,
+                ),
+                StatefulBuilder(builder: (context, StateSetter set) {
+                  return Column(children: [
+                    Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 70,
+                        child: Row(
+                          children: [
+                            TextButton(
+                              child: Text(
+                                "詳細資料",
+                                style: TextStyle(
+                                    color:  nowshow == 0?Colors.red:Colors.blue,
+                                    fontSize: nowshow == 0?22:18,
+                                    decoration: nowshow == 0?TextDecoration.underline:null,
+                                    fontWeight: nowshow == 0?FontWeight.bold:null),
+                              ),
+                              onPressed: () {
+                                set(() {
+                                  nowshow = 0;
+                                });
+                              },
+                            ),
+                            VerticalDivider(),
+                            TextButton(
+                              child: Text(
+                                "天氣資訊",
+                                style: TextStyle(
+                                    color: nowshow == 1?Colors.red:Colors.blue,
+                                    fontSize: nowshow == 1?22:18,
+                                    decoration: nowshow == 1?TextDecoration.underline:null,
+                                    fontWeight: nowshow == 1?FontWeight.bold:null),
+                              ),
+                              onPressed: () {
+                                set(() {
+                                  nowshow = 1;
+                                });
+                              },
+                            ),
+                          ],
+                          mainAxisAlignment: MainAxisAlignment.center,
+                        )),
+                    IndexedStack(index: nowshow, children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: Column(
+                          children: [
+                            Detail(
+                              name: name_ch,
+                            ),
+                            Divider(),
+                            SpeciesPhoto(
+                              name: name_ch,
+                            )
+                          ],
+                        ),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height * 0.6,
+                        alignment: Alignment.center,
+                        child: Text('no data'),
+                      )
+                    ])
+                  ]);
+                })
+              ],
+            ),
+          );
+        }
         if (snapshot.hasData) {
+          print('has data');
           String titleAlert, contentAlert;
+         // print(snapshot.data.elementAt(0)['radius_idx'].runtimeType);
           print((int.parse(snapshot.data.elementAt(0)['radius_idx'])));
           print((snapshot.data.elementAt(0)['air'].toInt()));
           if ((int.parse(snapshot.data.elementAt(0)['radius_idx']) >
@@ -596,10 +777,10 @@ class _MarkerBeTap extends State {
                                   child: Text(
                                     "詳細資料",
                                     style: TextStyle(
-                                        color: Colors.red,
-                                        fontSize: 20,
-                                        decoration: TextDecoration.underline,
-                                        fontWeight: FontWeight.bold),
+                                        color:  nowshow == 0?Colors.red:Colors.blue,
+                                        fontSize: nowshow == 0?22:18,
+                                        decoration: nowshow == 0?TextDecoration.underline:null,
+                                        fontWeight: nowshow == 0?FontWeight.bold:null),
                                   ),
                                   onPressed: () {
                                     set(() {
@@ -610,8 +791,12 @@ class _MarkerBeTap extends State {
                                 VerticalDivider(),
                                 TextButton(
                                   child: Text(
-                                    "天氣",
-                                    style: TextStyle(fontSize: 20),
+                                    "天氣資訊",
+                                    style: TextStyle(
+                                        color: nowshow == 1?Colors.red:Colors.blue,
+                                        fontSize: nowshow == 1?22:18,
+                                        decoration: nowshow == 1?TextDecoration.underline:null,
+                                        fontWeight: nowshow == 1?FontWeight.bold:null),
                                   ),
                                   onPressed: () {
                                     set(() {
@@ -763,27 +948,30 @@ class _MarkerBeTap extends State {
                       width: MediaQuery.of(context).size.width,
                       height: 70,
                       child: Row(
-                        children: [
-                          TextButton(
-                            child: Text(
-                              "詳細資料",
-                              style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 20,
-                                  decoration: TextDecoration.underline,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            onPressed: () {
-                              set(() {
-                                nowshow = 0;
-                              });
-                            },
+                        children: [ TextButton(
+                          child: Text(
+                            "詳細資料",
+                            style: TextStyle(
+                                color:  nowshow == 0?Colors.red:Colors.blue,
+                                fontSize: nowshow == 0?22:18,
+                                decoration: nowshow == 0?TextDecoration.underline:null,
+                                fontWeight: nowshow == 0?FontWeight.bold:null),
                           ),
+                          onPressed: () {
+                            set(() {
+                              nowshow = 0;
+                            });
+                          },
+                        ),
                           VerticalDivider(),
                           TextButton(
                             child: Text(
-                              "天氣",
-                              style: TextStyle(fontSize: 20),
+                              "天氣資訊",
+                              style: TextStyle(
+                                  color: nowshow == 1?Colors.red:Colors.blue,
+                                  fontSize: nowshow == 1?22:18,
+                                  decoration: nowshow == 1?TextDecoration.underline:null,
+                                  fontWeight: nowshow == 1?FontWeight.bold:null),
                             ),
                             onPressed: () {
                               set(() {
@@ -826,16 +1014,23 @@ class _MarkerBeTap extends State {
   }
 
   Future<List> getWeather(String location) async {
+    print(location);
     Map<String, dynamic> map;
     var url = Uri.parse(
         'https://ar3s.dev/weather/web-api?country=${location.substring(0, 3)}&district=${location.substring(3, 6)}');
     print('start get weather');
-    print(url);
+    // print(url);
     var response = await get(url);
-    print(response.body);
+    // print(response.body);
     map = jsonDecode(response.body);
+    // print(map['error']);
+    if(map['error']!=null) {
+      // print(map['error']);
+      throw("error");
+    }
 
     List lis = map.values.toList();
+
     return lis;
   }
 }

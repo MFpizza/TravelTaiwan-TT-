@@ -61,7 +61,6 @@ class DataFrom extends StatelessWidget {
                 itemCount: snapshot.data.docs.length,
                 itemBuilder: (context, int index) {
                   return Container(
-                    height: 200,
                     width: MediaQuery.of(context).size.width,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -114,7 +113,6 @@ class Team extends StatelessWidget {
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(color: Colors.black87)),
-                    height: 130,
                     width: MediaQuery.of(context).size.width,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,

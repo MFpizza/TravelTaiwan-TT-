@@ -84,7 +84,7 @@ class _Illustrate extends State<Illustrate> {
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.green,
-          title: Center(child:Text("圖鑑")),
+          title: Center(child:Text("圖鑑",style: TextStyle(fontSize: 26),)),
         ),
         body: Padding(
             padding: EdgeInsets.only(top: 20),
@@ -257,6 +257,7 @@ class _Illustrate extends State<Illustrate> {
 }
 
 List<String> species = [
+  "臺灣百合",
 "一枝黃花",
 "七葉一枝花",
 "咖啡樹",

@@ -43,7 +43,8 @@ class _HomePageState extends State<HomePage>
     LatLng latlngPosition =
         LatLng(currentPosition.latitude, currentPosition.longitude);
 
-    CameraPosition cameraPosition = CameraPosition(target: latlngPosition,zoom:  7.9746);
+    CameraPosition cameraPosition =
+        CameraPosition(target: latlngPosition, zoom: 7.9746);
 
     _mapController
         .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
@@ -138,17 +139,17 @@ class _HomePageState extends State<HomePage>
   }
 
   BuildContext mapContext;
+
   void addHistory(name_ch) {
-    setState( () {
-      if(history.contains(name_ch)) {
+    setState(() {
+      if (history.contains(name_ch)) {
         history.remove(name_ch);
       }
-      history.insert(0,
-          name_ch
-      );
+      history.insert(0, name_ch);
       recent_child.clear();
       for (var item in history) {
-        recent_child.insert(0,
+        recent_child.insert(
+            0,
             ListTile(
               leading: Text(
                 "#",
@@ -156,14 +157,21 @@ class _HomePageState extends State<HomePage>
               ),
               title: Text(item),
               trailing: CircleAvatar(
-                child: addMinusBtn(tags: tag, name_ch: item, setMarkers: setMarkers, getMarkers: getMarkers, mapController: _mapController, mapContext: mapContext, addHistory: addHistory),
+                child: addMinusBtn(
+                    tags: tag,
+                    name_ch: item,
+                    setMarkers: setMarkers,
+                    getMarkers: getMarkers,
+                    mapController: _mapController,
+                    mapContext: mapContext,
+                    addHistory: addHistory),
                 backgroundColor: Colors.black,
               ),
-            )
-        );
+            ));
       }
     });
   }
+
 
   Widget mapPage(BuildContext context) {
     mapContext = context;
@@ -257,13 +265,15 @@ class _HomePageState extends State<HomePage>
       dragBottom()
     ]));
   }
+
   Future<void> _onMapCreated(GoogleMapController controller) async {
     setState(() {
       _mapController = controller;
     });
     locatePosition();
   }
-
+  var lastPosition;
+  ScrollController DownController;
   Widget dragBottom() {
     // print(getMarkers());
     List<Marker> lis = _markers.values.toList();
@@ -273,51 +283,97 @@ class _HomePageState extends State<HomePage>
       maxChildSize: 0.5,
       builder: (BuildContext context, ScrollController scrollController) {
         if (_markers.length == 0) {
-          return Container(
-          );
+          return Container();
         }
         return Container(
           decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.vertical(top: Radius.circular(40.0))),
           child: Column(children: [
-            Center(child: Container(height:20,width:10,child:Icon(Icons.menu),)),
+                Container(
+                    height: 20,
+                    width: MediaQuery.of(context).size.width,
+                    color: Colors.white10,
+                    child:
+            Center(
+                child: Container(
+              height: 20,
+              width: 10,
+              child: Icon(Icons.menu),
+            )))
+            ,
             Expanded(
-               // height: MediaQuery.of(context).size.height*0.8,
-                child:ListView.builder(
-            controller: scrollController,
-            itemCount: _markers.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Container(
-                  padding: EdgeInsets.all(5),
-                  child: ListTile(
-                      leading: Image(
-                          image: AssetImage(
-                              'assets/material/${lis.elementAt(index).infoWindow.title}.jpg')),
-                      title: Text('${lis.elementAt(index).infoWindow.title}'),
-                      subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children:[
-                        Text(lis.elementAt(index).infoWindow.snippet),
-                        Text('距離: ${(Geolocator.distanceBetween(currentPosition.latitude, currentPosition.longitude, lis.elementAt(index).position.latitude, lis.elementAt(index).position.longitude).toInt().toDouble()/1000)} km')]),
-                    onTap: (){
-                       LatLng objectPosition=lis.elementAt(index).position;
+                // height: MediaQuery.of(context).size.height*0.8,
+                child: Scrollbar(
+                  radius: Radius.circular(20),
+                  thickness: 20,
+                  hoverThickness: 50,
+                  isAlwaysShown: true,
+                    controller: scrollController,
+                    showTrackOnHover: true,
+                    child: ListView.builder(
+                      controller: scrollController,
+                      itemCount: _markers.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Container(
+                            padding: EdgeInsets.all(5),
+                            child: ListTile(
+                              leading: Container(
+                                width: 60,
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: AssetImage(
+                                          'assets/material/${lis.elementAt(index).infoWindow.title}.jpg')),
+                                ),
+                              ),
+                              title: Text(
+                                  '${lis.elementAt(index).infoWindow.title}'),
+                              subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(lis
+                                        .elementAt(index)
+                                        .infoWindow
+                                        .snippet),
+                                    Text(
+                                        '距離: ${(Geolocator.distanceBetween(currentPosition.latitude, currentPosition.longitude, lis.elementAt(index).position.latitude, lis.elementAt(index).position.longitude).toInt().toDouble() / 1000)} km')
+                                  ]),
+                              onTap: () {
+                                LatLng objectPosition =
+                                    lis.elementAt(index).position;
 
-                       CameraPosition cameraPosition = CameraPosition(target: objectPosition,zoom:14);
+                                CameraPosition cameraPosition = CameraPosition(
+                                    target: objectPosition, zoom: 14);
 
-                       _mapController
-                           .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
-                       _mapController.showMarkerInfoWindow(lis.elementAt(index).markerId);
-                       showModalBottomSheet(
-                           isScrollControlled: true,
-                           context: context,
-                           builder: (context) {
-                             return MarkerBeTap(name_ch: lis.elementAt(index).infoWindow.title,location: lis.elementAt(index).infoWindow.snippet,position: lis.elementAt(index).position,);
-                           });
-                    },
-                  ));
-            },
-          ))]),
+                                _mapController.animateCamera(
+                                    CameraUpdate.newCameraPosition(
+                                        cameraPosition));
+                                _mapController.showMarkerInfoWindow(
+                                    lis.elementAt(index).markerId);
+                                showModalBottomSheet(
+                                    isScrollControlled: true,
+                                    context: context,
+                                    builder: (context) {
+                                      return MarkerBeTap(
+                                        name_ch: lis
+                                            .elementAt(index)
+                                            .infoWindow
+                                            .title,
+                                        location: lis
+                                            .elementAt(index)
+                                            .infoWindow
+                                            .snippet,
+                                        position: lis.elementAt(index).position,
+                                      );
+                                    });
+                              },
+                            ));
+                      },
+                    )))
+          ]),
         );
       },
     );

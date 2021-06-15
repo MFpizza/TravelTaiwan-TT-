@@ -79,7 +79,7 @@ class _addMinusBtn extends State<addMinusBtn> {
                 ImageConfiguration(size: Size(0.3, 0.3)), 'assets/marker.png');
             query_result.forEach((specie) {
               // print(specie.Location.length);
-              // print(specie);
+              print(specie);
               final marker = Marker(
                 markerId: MarkerId(specie.marker_id.toString()),
                 position: LatLng(specie.Latitude, specie.Longitude),

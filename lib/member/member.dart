@@ -45,6 +45,7 @@ class _MemberPage extends State<MemberPage> {
                 width: 130,
                 height: 130,
                 decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
                         image: AssetImage('assets/material/$a.jpg'),
                         fit: BoxFit.cover)),
@@ -155,8 +156,8 @@ class _MemberPage extends State<MemberPage> {
               ),
             ),
           ]),
+          Text(a,style: TextStyle(fontSize: a.length>5?14:20),),
           Divider(),
-          Text(a)
         ],
       ),
     );
@@ -196,10 +197,10 @@ class _MemberPage extends State<MemberPage> {
                                 child: Text(
                                   "收藏",
                                   style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 20,
-                                      decoration: TextDecoration.underline,
-                                      fontWeight: FontWeight.bold),
+                                      color:  nowShow == 0?Colors.red:Colors.blue,
+                                      fontSize: nowShow == 0?25:20,
+                                      decoration: nowShow == 0?TextDecoration.underline:null,
+                                      fontWeight: nowShow == 0?FontWeight.bold:null),
                                 ),
                                 onPressed: () {
                                   chang(() {
@@ -211,10 +212,10 @@ class _MemberPage extends State<MemberPage> {
                                 child: Text(
                                   "成就",
                                   style: TextStyle(
-                                      color: Colors.red,
-                                      fontSize: 20,
-                                      decoration: TextDecoration.underline,
-                                      fontWeight: FontWeight.bold),
+                                      color:  nowShow == 1?Colors.red:Colors.blue,
+                                      fontSize: nowShow == 1?25:20,
+                                      decoration: nowShow == 1?TextDecoration.underline:null,
+                                      fontWeight: nowShow == 1?FontWeight.bold:null),
                                 ),
                                 onPressed: () {
                                   chang(() {
@@ -270,7 +271,10 @@ class _MemberPage extends State<MemberPage> {
                           width: MediaQuery.of(context).size.width,
                           height: 400,
                           child: IndexedStack(index: nowShow, children: [
-                            (user!=null)?GridView.builder(
+                            (user!=null)? MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child:GridView.builder(
                                 // scrollDirection: Axis.horizontal,
                                 // shrinkWrap: true,
                                 gridDelegate:
@@ -361,7 +365,7 @@ class _MemberPage extends State<MemberPage> {
                                   //     ],
                                   //   ),
                                   // );
-                                }): Container(
+                                })): Container(
                               child: Center(
                                 child: Text('尚未登入'),
                               ),
@@ -377,7 +381,10 @@ class _MemberPage extends State<MemberPage> {
                                       if (snapshot.hasData) {
                                         // print(snapshot.data.data());
                                         int count = snapshot.data.data()['count'];
-                                        return ListView.builder(
+                                        return  MediaQuery.removePadding(
+                                            context: context,
+                                            removeTop: true,
+                                            child:ListView.builder(
                                             itemCount: 5,
                                             itemBuilder: (context, int index) {
                                               // print(index);
@@ -487,7 +494,7 @@ class _MemberPage extends State<MemberPage> {
                                                       ],
                                                     ),
                                                   ));
-                                            });
+                                            }));
                                       }
                                       return CircularProgressIndicator();
                                     })

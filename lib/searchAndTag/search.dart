@@ -39,10 +39,10 @@ class _SearchPage extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("History");
-    print(history);
-    print("Recent");
-    print(recent_child);
+    // print("History");
+    // print(history);
+    // print("Recent");
+    // print(recent_child);
     return Scaffold(
       resizeToAvoidBottomInset: false,
       body: Column(

@@ -24,8 +24,8 @@ class Species {
       marker_id: json['marker_id'] as int,
       name_sci: json['name_sci'] as String,
       name_ch: json['name_ch'] as String,
-      Longitude: json['Longitude'] as double,
-      Latitude: json['Latitude'] as double,
+      Longitude: json['Longitude'].toDouble(),
+      Latitude: json['Latitude'].toDouble(),
       Location: json['Location'] as String,
     );
   }

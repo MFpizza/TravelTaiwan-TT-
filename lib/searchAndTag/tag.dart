@@ -64,19 +64,49 @@ class Tag {
         return StatefulBuilder(
             key: GlobalKey(),
             builder: (popContext, popState) {
+              List<Widget> lis= this.returnTagWidget(context,popState, setMarkers, getMarkers);
               return Container(
                 //padding: EdgeInsets.all(10),
-                  height: list.length!=0?(list.length + 1) * //TODO 123
-                      65.toDouble():2*65.toDouble(),
+                  height: 350,
                   width: 200,
 //                                            color: Colors.black54,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20),
                       color: Colors.white,
                       border: Border.all(color: Colors.black)),
-                  child: Column(
-                    children: this.returnTagWidget(context,popState, setMarkers, getMarkers),
-                  ));
+                  child:
+                  Column(children: [
+                    Container(
+                      decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+
+                    child: Text(
+                      "已選 #",
+                      style: TextStyle(color: Colors.white, fontSize: 20),
+                    ),
+                    alignment: Alignment.center,
+                    height: 63,
+                  ),
+                  Container(
+                    // color: Colors.red,
+                      width: 200,
+                      height: 285,
+                      child:
+                      MediaQuery.removePadding(
+                          context: context,
+                          removeTop: true,
+                          child:
+                          Scrollbar(
+                              showTrackOnHover: true,
+                              isAlwaysShown: true,
+                              child:
+                          ListView.builder(
+                      itemCount: lis.length,
+                      itemBuilder: (context,int index){
+                    return lis.elementAt(index);
+                  }))))]));
             });
       },
     );
@@ -84,15 +114,15 @@ class Tag {
 
   List<Widget> returnTagWidget(BuildContext context,Function popState, Function setMarkers, Function getMarkers) {
     List<Widget> wList = <Widget>[];
-    wList.add(Container(
-      color: Colors.green,
-      child: Text(
-        "已選 #",
-        style: TextStyle(color: Colors.white, fontSize: 20),
-      ),
-      alignment: Alignment.center,
-      height: 63,
-    ));
+    // wList.add(Container(
+    //   color: Colors.green,
+    //   child: Text(
+    //     "已選 #",
+    //     style: TextStyle(color: Colors.white, fontSize: 20),
+    //   ),
+    //   alignment: Alignment.center,
+    //   height: 63,
+    // ));
     if(list.length==0){
       wList.add(ListTile(
           title:Text("尚未選取Tag",textAlign: TextAlign.center,)
